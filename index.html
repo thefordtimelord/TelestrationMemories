@@ -6,353 +6,3731 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Telestrations" />
+  <meta name="apple-mobile-web-app-title" content="Telestrations Vault" />
   <meta name="theme-color" content="#FAF6EE" />
   <title>Telestrations Vault — Tabletop Journal Scanner &amp; Archive</title>
-<!-- ... existing code ... -->
+
   <style>
-    /* Base warm tabletop sketchbook styling with iOS standalone safe-area support */
-    body {
-      background-color: #FAF6EE;
-      color: #1E293B;
-      font-family: 'Inter', system-ui, sans-serif;
-      background-image: radial-gradient(rgba(30, 41, 59, 0.055) 1px, transparent 1px);
-      background-size: 22px 22px;
+    /* =========================================================================
+       1. DESIGN TOKENS & BASE SKETCHBOOK STYLING (ZERO EXTERNAL DEPENDENCIES)
+       ========================================================================= */
+    :root {
+      --bg-paper: #FAF6EE;
+      --bg-paper-dark: #F0E8D8;
+      --bg-card: #FFFFFF;
+      --ink: #1E293B;
+      --ink-muted: #64748B;
+      --ink-light: #94A3B8;
+      --border: rgba(30, 41, 59, 0.14);
+      --border-strong: rgba(30, 41, 59, 0.85);
+      --coral: #EF4444;
+      --coral-dark: #DC2626;
+      --coral-soft: #FEF2F2;
+      --teal: #0D9488;
+      --teal-dark: #0F766E;
+      --teal-soft: #F0FDFA;
+      --blue: #2563EB;
+      --blue-dark: #1D4ED8;
+      --blue-soft: #EFF6FF;
+      --mustard: #F59E0B;
+      --mustard-dark: #D97706;
+      --mustard-soft: #FFFBEB;
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 22px;
+      --shadow-card: 0 3px 0 rgba(30, 41, 59, 0.09), 0 8px 20px rgba(30, 41, 59, 0.05);
+      --shadow-tactile: 0 3px 0 rgba(30, 41, 59, 0.85);
+      --shadow-tactile-sm: 0 2px 0 rgba(30, 41, 59, 0.85);
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-hand: "Marker Felt", "Bradley Hand", "Chalkboard SE", "Comic Sans MS", cursive, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background-color: var(--bg-paper);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
       -webkit-tap-highlight-color: transparent;
       overflow-x: hidden;
-      padding-bottom: env(safe-area-inset-bottom);
     }
 
-    header.sticky {
-      padding-top: env(safe-area-inset-top);
+    body {
+      background-image: radial-gradient(rgba(30, 41, 59, 0.065) 1px, transparent 1px);
+      background-size: 22px 22px;
+      padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
     }
 
-    /* Notebook spiral binding strip along top of cards */
-<!-- ... existing code ... -->
-            <div class="flex flex-wrap items-center gap-2 shrink-0">
-              <button id="revealEditGameBtn" class="btn-tactile min-h-[40px] px-3 py-2 rounded-xl bg-paper hover:bg-paperDark text-ink font-bold text-xs sm:text-sm border-2 border-ink/15 flex items-center gap-1.5">
-                <svg class="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                Edit
-              </button>
-              <button id="shareStripBtn" class="btn-tactile min-h-[40px] px-3.5 py-2 rounded-xl bg-markerBlue hover:bg-blue-700 text-white font-bold text-xs sm:text-sm border-2 border-ink/90 shadow-tactileSm flex items-center gap-1.5">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                Share Strip
-              </button>
-              <button id="exportPngStripBtn" class="btn-tactile min-h-[40px] px-3.5 py-2 rounded-xl bg-markerTeal hover:bg-teal-700 text-white font-bold text-xs sm:text-sm border-2 border-ink/90 shadow-tactileSm flex items-center gap-1.5">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Download PNG
-              </button>
-            </div>
-<!-- ... existing code ... -->
-                <div>
-                  <h2 id="comicTitle" class="text-xl sm:text-2xl font-extrabold text-ink"></h2>
-                  <p id="comicNotes" class="text-xs sm:text-sm text-slate-500 mt-0.5"></p>
-                </div>
-                <span class="text-xs font-semibold text-amber-800 bg-amber-100 border border-amber-300 px-3 py-1 rounded-full">
-                  👑 Tap any panel to crown the Derailment Moment
-                </span>
-              </div>
-<!-- ... existing code ... -->
-                    <!-- Card Action Buttons -->
-                    <div class="flex flex-wrap items-center gap-2 shrink-0">
-                      <button data-action="reveal" data-game-id="${esc(game.id)}" class="btn-tactile min-h-[40px] px-4 py-2 rounded-xl bg-markerBlue hover:bg-blue-700 text-white font-bold text-xs sm:text-sm border-2 border-ink/90 shadow-tactileSm flex items-center gap-1.5">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                        Reveal
-                      </button>
-                      <button data-action="share-strip" data-game-id="${esc(game.id)}" title="Share comic strip via Messages, AirDrop, or Photos" class="btn-tactile min-h-[40px] px-3.5 py-2 rounded-xl bg-markerTeal hover:bg-teal-700 text-white font-bold text-xs sm:text-sm border-2 border-ink/90 shadow-tactileSm flex items-center gap-1.5">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                        Share Strip
-                      </button>
-                      <button data-action="export-png" data-game-id="${esc(game.id)}" title="Download PNG strip" class="btn-tactile min-h-[40px] px-3 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-markerTeal font-bold text-xs sm:text-sm border-2 border-teal-200 flex items-center gap-1">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        PNG
-                      </button>
-                      <button data-action="edit" data-game-id="${esc(game.id)}" class="btn-tactile min-h-[40px] px-3 py-2 rounded-xl bg-paper hover:bg-paperDark text-ink font-bold text-xs sm:text-sm border-2 border-ink/15 flex items-center gap-1">
-                        Edit
-                      </button>
-                      <button data-action="delete" data-game-id="${esc(game.id)}" title="Delete game" class="btn-tactile min-h-[40px] px-2.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-markerCoral font-bold text-xs border-2 border-red-200">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                      </button>
-                    </div>
-<!-- ... existing code ... -->
-        const grid = document.getElementById('comicStripGrid');
-        grid.innerHTML = game.pages
-          .map((page, idx) => {
-            const isDerail = page.id === game.derailmentPageId;
-            const tagColor = page.type === 'sketch' ? 'bg-markerCoral' : idx === 0 ? 'bg-markerBlue' : 'bg-markerTeal';
-            return `
-              <div
-                data-crown-page="${esc(page.id)}"
-                role="button"
-                tabindex="0"
-                title="Tap panel to toggle Derailment Moment"
-                class="relative flex flex-col bg-paper hover:bg-paperDark/60 rounded-2xl border-2 cursor-pointer transition-all ${
-                  isDerail ? 'border-markerAmber ring-4 ring-markerAmber/25' : 'border-ink/15 hover:border-markerAmber/60'
-                } p-3 shadow-sm"
-              >
-                <!-- Speech-bubble header tag -->
-                <div class="flex items-center justify-between gap-2 mb-2">
-                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold text-white ${tagColor}">
-                    ${esc(getPageLabel(idx, page.type))}
-                  </span>
-                  <span
-                    class="px-2 py-1 rounded-lg text-[11px] font-bold border transition-colors ${
-                      isDerail
-                        ? 'bg-markerAmber text-ink border-ink/70 shadow-tactileSm'
-                        : 'bg-white text-slate-500 border-ink/15'
-                    }"
-                  >
-                    👑 ${isDerail ? 'Derailment!' : 'Crown'}
-                  </span>
-                </div>
-<!-- ... existing code ... -->
-      // =========================================================================
-      // 10. NATIVE SHARE & EXPORT SHAREABLE PNG STRIP (HTML5 CANVAS)
-      // =========================================================================
+    button, input, textarea, select {
+      font-family: inherit;
+      color: inherit;
+    }
 
-      /**
-       * Render a high-resolution shareable comic strip canvas for a game.
-       */
-      async function buildComicStripCanvas(game) {
-        const pages = game.pages;
-        const cols = pages.length >= 4 ? 2 : 1;
-        const rows = Math.ceil(pages.length / cols);
+    img {
+      max-width: 100%;
+      display: block;
+    }
 
-        const pad = 44;
-        const gap = 30;
-        const panelW = 540;
-        const imgH = 405;
-        const panelH = imgH + 112;
-        const headerH = 140;
-        const footerH = 56;
+    .hidden {
+      display: none !important;
+    }
 
-        const canvasW = pad * 2 + cols * panelW + (cols - 1) * gap;
-        const canvasH = headerH + rows * panelH + (rows - 1) * gap + footerH;
+    /* =========================================================================
+       2. ON-SCREEN ERROR BANNER & BOOT FALLBACK
+       ========================================================================= */
+    #error-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+      background: #B91C1C;
+      color: #FFFFFF;
+      padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      border-bottom: 3px solid #7F1D1D;
+    }
 
-        const canvas = document.createElement('canvas');
-        canvas.width = canvasW;
-        canvas.height = canvasH;
-        const ctx = canvas.getContext('2d');
+    .error-banner-inner {
+      max-width: 880px;
+      margin: 0 auto;
+    }
 
-        // Cream sketchbook background
-        ctx.fillStyle = '#FAF6EE';
-        ctx.fillRect(0, 0, canvasW, canvasH);
+    .error-banner-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
 
-        // Subtle dotted paper texture
-        ctx.fillStyle = 'rgba(30,41,59,0.06)';
-        for (let x = 20; x < canvasW; x += 28) {
-          for (let y = 20; y < canvasH; y += 28) {
-            ctx.fillRect(x, y, 2, 2);
+    .error-banner-title {
+      font-weight: 800;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .error-banner-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .error-banner-btn {
+      background: rgba(255, 255, 255, 0.18);
+      color: #FFFFFF;
+      border: 1.5px solid rgba(255, 255, 255, 0.55);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 34px;
+    }
+
+    .error-banner-btn:active {
+      transform: translateY(1px);
+    }
+
+    .error-banner-msg {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0 0 6px;
+      word-break: break-word;
+    }
+
+    .error-banner-meta {
+      font-size: 11px;
+      opacity: 0.9;
+      margin: 0 0 6px;
+      font-family: var(--font-mono);
+    }
+
+    .error-banner-stack {
+      background: rgba(0, 0, 0, 0.28);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      max-height: 120px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+    }
+
+    /* =========================================================================
+       3. LAYOUT, HEADER & NAVIGATION
+       ========================================================================= */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(250, 246, 238, 0.94);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--border);
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+
+    .header-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 12px 14px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--coral);
+      border: 2px solid var(--border-strong);
+      box-shadow: var(--shadow-tactile-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.15;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-text p {
+      margin: 1px 0 0;
+      font-size: 11px;
+      color: var(--ink-muted);
+      font-weight: 600;
+    }
+
+    .header-utils {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: var(--bg-paper-dark);
+      padding: 5px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+    }
+
+    .nav-tab {
+      border: 2px solid transparent;
+      background: transparent;
+      border-radius: 10px;
+      padding: 9px 8px;
+      min-height: 42px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--ink-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+    }
+
+    .nav-tab.active {
+      background: var(--bg-card);
+      color: var(--ink);
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-tactile-sm);
+    }
+
+    .nav-tab:active {
+      transform: translateY(1px);
+    }
+
+    .badge-count {
+      background: var(--bg-paper-dark);
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 999px;
+    }
+
+    .nav-tab.active .badge-count {
+      background: var(--mustard-soft);
+      color: var(--mustard-dark);
+    }
+
+    .main-container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 16px 14px 40px;
+    }
+
+    /* =========================================================================
+       4. BUTTONS, CARDS, INPUTS & PILLS
+       ========================================================================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 42px;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--ink);
+      text-decoration: none;
+      transition: transform 0.08s ease, background 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: translateY(2px);
+    }
+
+    .btn-sm {
+      min-height: 36px;
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 10px;
+    }
+
+    .btn-icon {
+      min-width: 38px;
+      min-height: 38px;
+      padding: 6px;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: #FFFFFF;
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-tactile-sm);
+    }
+
+    .btn-coral {
+      background: var(--coral);
+      color: #FFFFFF;
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-tactile-sm);
+    }
+
+    .btn-teal {
+      background: var(--teal);
+      color: #FFFFFF;
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-tactile-sm);
+    }
+
+    .btn-mustard {
+      background: var(--mustard);
+      color: var(--ink);
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-tactile-sm);
+    }
+
+    .btn-soft {
+      background: var(--bg-paper);
+      color: var(--ink);
+      border-color: var(--border);
+    }
+
+    .btn-danger-soft {
+      background: var(--coral-soft);
+      color: var(--coral-dark);
+      border-color: rgba(239, 68, 68, 0.35);
+    }
+
+    .btn-teal-soft {
+      background: var(--teal-soft);
+      color: var(--teal-dark);
+      border-color: rgba(13, 148, 136, 0.35);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Spiral notebook binding strip along top of cards */
+    .notebook-spiral {
+      height: 14px;
+      background-color: var(--bg-paper-dark);
+      background-image: radial-gradient(circle at 12px 7px, var(--ink) 3.5px, transparent 4px);
+      background-size: 24px 14px;
+      border-bottom: 1.5px solid var(--border);
+      opacity: 0.72;
+    }
+
+    .card-body {
+      padding: 16px;
+    }
+
+    .input, .textarea, .select {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--bg-paper);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .input:focus, .textarea:focus, .select:focus {
+      border-color: var(--blue);
+      background: #FFFFFF;
+    }
+
+    .textarea {
+      min-height: 68px;
+      resize: vertical;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .pill-secret { background: var(--blue); color: #FFFFFF; }
+    .pill-sketch { background: var(--coral); color: #FFFFFF; }
+    .pill-guess  { background: var(--teal); color: #FFFFFF; }
+    .pill-crown  { background: var(--mustard); color: var(--ink); border: 1.5px solid var(--border-strong); }
+
+    /* =========================================================================
+       5. HISTORY TAB STYLES
+       ========================================================================= */
+    .toolbar-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .search-wrap {
+      flex: 1 1 220px;
+      position: relative;
+    }
+
+    .search-wrap .input {
+      padding-left: 38px;
+      background: #FFFFFF;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--ink-light);
+      pointer-events: none;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .games-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .game-card-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .game-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.2;
+      color: var(--ink);
+    }
+
+    .game-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-muted);
+    }
+
+    .game-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .thumb-strip {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 6px 2px 10px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+
+    .thumb-item {
+      flex: 0 0 116px;
+      background: var(--bg-paper);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 6px;
+      cursor: pointer;
+      text-align: left;
+      transition: transform 0.12s ease, border-color 0.12s ease;
+    }
+
+    .thumb-item:active {
+      transform: scale(0.97);
+    }
+
+    .thumb-item.is-derail {
+      border-color: var(--mustard);
+      background: var(--mustard-soft);
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
+    }
+
+    .thumb-img-wrap {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      border-radius: 9px;
+      overflow: hidden;
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      position: relative;
+      margin-bottom: 6px;
+    }
+
+    .thumb-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumb-crown-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: var(--mustard);
+      color: var(--ink);
+      font-size: 11px;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--border-strong);
+    }
+
+    .thumb-type {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 2px;
+    }
+
+    .thumb-caption {
+      font-family: var(--font-hand);
+      font-size: 13px;
+      line-height: 1.2;
+      color: var(--ink);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .notes-inline-wrap {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1.5px dashed var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notes-inline-label {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--ink-muted);
+      white-space: nowrap;
+    }
+
+    .notes-inline-input {
+      flex: 1;
+      border: 1.5px solid transparent;
+      background: transparent;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      min-height: 36px;
+    }
+
+    .notes-inline-input:hover,
+    .notes-inline-input:focus {
+      background: var(--bg-paper);
+      border-color: var(--border);
+      outline: none;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: #FFFFFF;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+    }
+
+    /* =========================================================================
+       6. SCAN JOURNAL TAB STYLES
+       ========================================================================= */
+    .scan-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 820px) {
+      .scan-grid {
+        grid-template-columns: 1.05fr 0.95fr;
+        align-items: start;
+      }
+    }
+
+    .viewfinder-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #0F172A;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 2px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #CBD5E1;
+    }
+
+    .viewfinder-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .viewfinder-video.filter-pop {
+      filter: contrast(1.38) brightness(1.08) saturate(1.25);
+    }
+
+    .viewfinder-video.filter-high {
+      filter: grayscale(0.25) contrast(1.9) brightness(1.15);
+    }
+
+    .align-frame {
+      position: absolute;
+      inset: 12% 10%;
+      border: 2px dashed rgba(255, 255, 255, 0.72);
+      border-radius: 14px;
+      pointer-events: none;
+      box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.25);
+    }
+
+    .align-label {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.78);
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .viewfinder-placeholder {
+      text-align: center;
+      padding: 20px;
+      max-width: 280px;
+    }
+
+    .shutter-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .shutter-btn {
+      width: 68px;
+      height: 68px;
+      border-radius: 999px;
+      background: var(--coral);
+      border: 4px solid #FFFFFF;
+      box-shadow: 0 0 0 3px var(--ink), 0 4px 12px rgba(0,0,0,0.22);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      transition: transform 0.1s ease;
+    }
+
+    .shutter-btn:active {
+      transform: scale(0.92);
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      align-items: center;
+    }
+
+    .filter-pill {
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 2px solid var(--border);
+      background: var(--bg-paper);
+      color: var(--ink-muted);
+      cursor: pointer;
+      min-height: 36px;
+    }
+
+    .filter-pill.active {
+      background: var(--ink);
+      color: #FFFFFF;
+      border-color: var(--ink);
+    }
+
+    .text-card-composer {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--blue-soft);
+      border: 2px solid rgba(37, 99, 235, 0.25);
+    }
+
+    .draft-page-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--bg-paper);
+      border: 2px solid var(--border);
+      align-items: flex-start;
+    }
+
+    .draft-page-thumb {
+      width: 92px;
+      height: 70px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #FFFFFF;
+      border: 1.5px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .draft-page-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .draft-page-fields {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .draft-page-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .draft-page-controls {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    /* =========================================================================
+       7. REVEAL TAB STYLES
+       ========================================================================= */
+    .reveal-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .mode-switcher {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .mode-btn {
+      padding: 10px 8px;
+      min-height: 44px;
+      border-radius: 14px;
+      border: 2px solid var(--border);
+      background: #FFFFFF;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--ink-muted);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      text-align: center;
+    }
+
+    .mode-btn.active {
+      background: var(--ink);
+      color: #FFFFFF;
+      border-color: var(--ink);
+      box-shadow: var(--shadow-tactile-sm);
+    }
+
+    /* Dramatic Flip Stage */
+    .flip-stage {
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .flip-card-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #FFFFFF;
+      border-radius: 16px;
+      border: 2px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .flip-card-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #FFFFFF;
+    }
+
+    .suspense-cover {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        #1E293B,
+        #1E293B 14px,
+        #283548 14px,
+        #283548 28px
+      );
+      color: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      cursor: pointer;
+      z-index: 5;
+      transition: opacity 0.22s ease;
+    }
+
+    .suspense-cover-badge {
+      background: var(--mustard);
+      color: var(--ink);
+      font-weight: 900;
+      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 2px solid #FFFFFF;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .suspense-cover h3 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .suspense-cover p {
+      margin: 0;
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    .flip-caption {
+      font-family: var(--font-hand);
+      font-size: 26px;
+      text-align: center;
+      margin: 14px 0 4px;
+      color: var(--ink);
+      min-height: 36px;
+    }
+
+    .flip-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .flip-dots {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .flip-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--border);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .flip-dot.active {
+      background: var(--coral);
+      width: 24px;
+    }
+
+    /* Started vs Ended */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    @media (min-width: 640px) {
+      .compare-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .compare-img-box {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      background: #FFFFFF;
+      margin: 10px 0;
+    }
+
+    .compare-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .chain-list {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chain-item {
+      width: 100%;
+      max-width: 560px;
+      background: var(--bg-paper);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .chain-item.is-derail {
+      background: var(--mustard-soft);
+      border-color: var(--mustard);
+    }
+
+    /* Comic Strip Grid */
+    .comic-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 640px) {
+      .comic-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .comic-panel {
+      background: var(--bg-paper);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.1s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .comic-panel:active {
+      transform: scale(0.985);
+    }
+
+    .comic-panel.is-derail {
+      background: var(--mustard-soft);
+      border-color: var(--mustard);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.28);
+    }
+
+    .comic-panel-img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #FFFFFF;
+      border: 1.5px solid var(--border);
+      margin: 8px 0;
+    }
+
+    .comic-panel-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .comic-panel-caption {
+      font-family: var(--font-hand);
+      font-size: 20px;
+      text-align: center;
+      margin: 4px 0 0;
+      color: var(--ink);
+    }
+
+    /* =========================================================================
+       8. MODALS & TOASTS
+       ========================================================================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      background: rgba(15, 23, 42, 0.58);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-card {
+      background: #FFFFFF;
+      border: 2px solid var(--border-strong);
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 540px;
+      max-height: 86vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 14px 16px;
+      background: var(--bg-paper);
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .modal-body {
+      padding: 16px;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .modal-footer {
+      padding: 12px 16px;
+      border-top: 1.5px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      background: var(--bg-paper);
+    }
+
+    .diag-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 14px;
+    }
+
+    .diag-table th, .diag-table td {
+      text-align: left;
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      vertical-align: top;
+    }
+
+    .diag-table th {
+      width: 38%;
+      color: var(--ink-muted);
+      font-weight: 800;
+    }
+
+    .diag-table td {
+      font-family: var(--font-mono);
+      word-break: break-word;
+    }
+
+    .diag-log-list {
+      background: #0F172A;
+      color: #E2E8F0;
+      border-radius: 12px;
+      padding: 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      max-height: 180px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: calc(100% - 28px);
+      max-width: 420px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--ink);
+      color: #FFFFFF;
+      padding: 11px 16px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .toast-success { background: var(--teal-dark); }
+    .toast-warn    { background: var(--mustard-dark); }
+    .toast-error   { background: var(--coral-dark); }
+
+    .app-footer {
+      max-width: 980px;
+      margin: 20px auto 0;
+      padding: 14px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--ink-muted);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- =========================================================================
+       STATIC BOOT FALLBACK (Guarantees the page is NEVER blank white)
+       ========================================================================= -->
+  <div id="boot-fallback" style="position:fixed;inset:0;z-index:9000;background:#FAF6EE;color:#1E293B;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+    <div style="width:56px;height:56px;border-radius:16px;background:#EF4444;border:2px solid #1E293B;display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;font-weight:900;margin-bottom:14px;box-shadow:0 3px 0 #1E293B;">
+      ✎
+    </div>
+    <h2 style="margin:0 0 6px;font-size:20px;font-weight:900;">Loading Telestrations Vault...</h2>
+    <p id="boot-fallback-status" style="margin:0;font-size:13px;color:#64748B;max-width:320px;">
+      Preparing sketchbook archive &amp; local storage.
+    </p>
+  </div>
+
+  <!-- =========================================================================
+       ON-SCREEN ERROR BANNER (Populated automatically on any JS error)
+       ========================================================================= -->
+  <div id="error-banner" class="hidden" role="alert" aria-live="assertive">
+    <div class="error-banner-inner">
+      <div class="error-banner-header">
+        <div class="error-banner-title">
+          <span>⚠️</span>
+          <span id="error-banner-title-text">Runtime Error Detected</span>
+        </div>
+        <div class="error-banner-actions">
+          <button type="button" id="error-copy-btn" class="error-banner-btn">Copy Error</button>
+          <button type="button" id="error-dismiss-btn" class="error-banner-btn">Dismiss</button>
+        </div>
+      </div>
+      <p id="error-banner-msg" class="error-banner-msg"></p>
+      <p id="error-banner-meta" class="error-banner-meta"></p>
+      <pre id="error-banner-stack" class="error-banner-stack hidden"></pre>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       IMMEDIATE STANDALONE BOOT GUARD SCRIPT (Runs BEFORE main app script)
+       ========================================================================= -->
+  <script id="boot-guard">
+    (function () {
+      window.__TV_BOOTED = false;
+      window.__TV_LOGS = [];
+      window.__TV_LAST_ERROR_TEXT = '';
+
+      function safeCopyText(text) {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).catch(function () {
+              fallbackCopy(text);
+            });
+            return true;
           }
+        } catch (e) {}
+        return fallbackCopy(text);
+      }
+
+      function fallbackCopy(text) {
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          var ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          return ok;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      window.__TV_COPY_TEXT = safeCopyText;
+
+      window.__TV_LOG = function (level, message, meta, stack) {
+        var entry = {
+          time: new Date().toLocaleTimeString(),
+          level: level || 'INFO',
+          message: String(message || ''),
+          meta: String(meta || ''),
+          stack: String(stack || '')
+        };
+        window.__TV_LOGS.push(entry);
+        if (window.__TV_LOGS.length > 60) {
+          window.__TV_LOGS.shift();
+        }
+        return entry;
+      };
+
+      window.__TV_SHOW_ERROR = function (title, message, location, stack) {
+        var entry = window.__TV_LOG('ERROR', message, location, stack);
+        var banner = document.getElementById('error-banner');
+        var titleEl = document.getElementById('error-banner-title-text');
+        var msgEl = document.getElementById('error-banner-msg');
+        var metaEl = document.getElementById('error-banner-meta');
+        var stackEl = document.getElementById('error-banner-stack');
+
+        window.__TV_LAST_ERROR_TEXT = [
+          title || 'Runtime Error',
+          'Message: ' + entry.message,
+          location ? 'Location: ' + location : '',
+          stack ? 'Stack:\n' + stack : '',
+          'UserAgent: ' + (navigator.userAgent || 'unknown')
+        ].filter(Boolean).join('\n');
+
+        if (banner && msgEl) {
+          if (titleEl) titleEl.textContent = title || 'Runtime Error Detected';
+          msgEl.textContent = entry.message || 'Unknown error';
+          if (metaEl) metaEl.textContent = location || '';
+          if (stackEl) {
+            if (stack) {
+              stackEl.textContent = stack;
+              stackEl.classList.remove('hidden');
+            } else {
+              stackEl.classList.add('hidden');
+            }
+          }
+          banner.classList.remove('hidden');
         }
 
-        // Title Header
-        ctx.fillStyle = '#1E293B';
-        ctx.font = '800 38px Inter, sans-serif';
+        // If boot hasn't finished yet, update the fallback message too
+        var statusEl = document.getElementById('boot-fallback-status');
+        if (statusEl && !window.__TV_BOOTED) {
+          statusEl.textContent = 'Startup error occurred. See the red banner above for details.';
+        }
+      };
+
+      // Wire banner buttons immediately
+      var copyBtn = document.getElementById('error-copy-btn');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function () {
+          safeCopyText(window.__TV_LAST_ERROR_TEXT || 'No error text');
+          copyBtn.textContent = 'Copied!';
+          setTimeout(function () { copyBtn.textContent = 'Copy Error'; }, 1600);
+        });
+      }
+      var dismissBtn = document.getElementById('error-dismiss-btn');
+      if (dismissBtn) {
+        dismissBtn.addEventListener('click', function () {
+          var b = document.getElementById('error-banner');
+          if (b) b.classList.add('hidden');
+        });
+      }
+
+      // Global JS runtime error handler
+      window.onerror = function (message, source, lineno, colno, error) {
+        var loc = (source ? source.split('/').pop() : 'inline') + ':' + (lineno || 0) + ':' + (colno || 0);
+        var stack = (error && error.stack) ? error.stack : '';
+        window.__TV_SHOW_ERROR('JavaScript Error', String(message), loc, stack);
+        return false;
+      };
+
+      // Global unhandled Promise rejection handler
+      window.addEventListener('unhandledrejection', function (event) {
+        var reason = event && event.reason;
+        var msg = (reason && reason.message) ? reason.message : String(reason || 'Unhandled Promise rejection');
+        var stack = (reason && reason.stack) ? reason.stack : '';
+        window.__TV_SHOW_ERROR('Unhandled Promise Rejection', msg, 'Promise', stack);
+      });
+
+      // Boot watchdog: if app hasn't booted within 5 seconds, inform user instead of hanging
+      setTimeout(function () {
+        if (!window.__TV_BOOTED) {
+          var statusEl = document.getElementById('boot-fallback-status');
+          if (statusEl) {
+            statusEl.innerHTML = 'Taking longer than expected to start. Try reloading or check for an error banner above.';
+          }
+          window.__TV_LOG('WARN', 'Boot watchdog triggered after 5s', 'boot-guard', '');
+        }
+      }, 5000);
+    })();
+  </script>
+
+  <!-- =========================================================================
+       APP HEADER & TAB NAVIGATION
+       ========================================================================= -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h1>Telestrations Vault</h1>
+            <p>Tabletop Journal Scanner &amp; Archive</p>
+          </div>
+        </div>
+        <div class="header-utils">
+          <button type="button" id="openDiagBtn" class="btn btn-sm btn-soft" title="Open Diagnostics">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>Diagnostics</span>
+          </button>
+        </div>
+      </div>
+
+      <nav class="nav-tabs" aria-label="Main Navigation">
+        <button type="button" class="nav-tab active" data-tab="history" id="tabBtn-history">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <span>History</span>
+          <span class="badge-count" id="historyCountBadge">0</span>
+        </button>
+
+        <button type="button" class="nav-tab" data-tab="scan" id="tabBtn-scan">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <span>Scan Journal</span>
+          <span class="badge-count" id="draftCountBadge">0</span>
+        </button>
+
+        <button type="button" class="nav-tab" data-tab="reveal" id="tabBtn-reveal">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span>Reveal</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       MAIN CONTENT AREA
+       ========================================================================= -->
+  <main class="main-container">
+
+    <!-- ===================== TAB 1: HISTORY ARCHIVE ===================== -->
+    <section id="view-history">
+      <div class="toolbar-row">
+        <div class="search-wrap">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="search" id="historySearchInput" class="input" placeholder="Search games, captions, or notes..." />
+        </div>
+        <div class="toolbar-actions">
+          <button type="button" id="newScanShortcutBtn" class="btn btn-coral">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            New Scan
+          </button>
+          <button type="button" id="exportJsonBtn" class="btn btn-soft" title="Export entire vault as JSON">
+            Backup JSON
+          </button>
+          <label class="btn btn-soft" title="Import JSON backup">
+            Import JSON
+            <input type="file" id="importJsonInput" accept="application/json,.json" class="hidden" />
+          </label>
+        </div>
+      </div>
+
+      <div id="gamesList" class="games-list"></div>
+    </section>
+
+    <!-- ===================== TAB 2: SCAN JOURNAL ===================== -->
+    <section id="view-scan" class="hidden">
+      <div class="scan-grid">
+        <!-- Left Column: Camera & Capture Controls -->
+        <div class="card">
+          <div class="notebook-spiral"></div>
+          <div class="card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;">
+              <h2 style="margin:0;font-size:17px;font-weight:900;">Quick-Scan Capture</h2>
+              <span id="editingBadge" class="pill pill-crown hidden">Editing Saved Game</span>
+            </div>
+
+            <!-- Live Camera Viewfinder -->
+            <div class="viewfinder-box" id="viewfinderBox">
+              <video id="cameraVideo" class="viewfinder-video hidden" autoplay playsinline muted></video>
+              <div id="cameraOverlay" class="align-frame hidden"></div>
+              <div id="cameraOverlayLabel" class="align-label hidden">Align journal page inside frame</div>
+              <div id="cameraPlaceholder" class="viewfinder-placeholder">
+                <div style="font-size:32px;margin-bottom:8px;">📷</div>
+                <div style="font-weight:800;font-size:14px;color:#FFFFFF;margin-bottom:4px;">Ready to Scan Pages</div>
+                <div style="font-size:12px;line-height:1.4;">
+                  Start the live rear camera below, or use <strong>Add Photos / Camera</strong> to snap or pick multiple pages at once.
+                </div>
+              </div>
+            </div>
+
+            <!-- Shutter & Photo Input Controls -->
+            <div class="shutter-row">
+              <button type="button" id="toggleCameraBtn" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                <span id="toggleCameraLabel">Start Live Camera</span>
+              </button>
+
+              <button type="button" id="shutterBtn" class="shutter-btn hidden" title="Capture Page" aria-label="Capture Page">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9"></circle>
+                </svg>
+              </button>
+
+              <label class="btn btn-teal" style="cursor:pointer;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                <span>Add Photos / Camera</span>
+                <input type="file" id="multiPhotoInput" accept="image/*" multiple class="hidden" />
+              </label>
+
+              <button type="button" id="toggleTextCardBtn" class="btn btn-soft">
+                + Text Card
+              </button>
+            </div>
+
+            <!-- Dry-Erase Scan Enhancer Toggle -->
+            <div class="filter-pills">
+              <span style="font-size:12px;font-weight:800;color:var(--ink-muted);margin-right:4px;">Dry-Erase Filter:</span>
+              <button type="button" class="filter-pill" data-filter="normal">Normal</button>
+              <button type="button" class="filter-pill active" data-filter="pop">Dry-Erase Pop</button>
+              <button type="button" class="filter-pill" data-filter="high">High-Contrast</button>
+            </div>
+
+            <!-- Quick Text-Only Card Composer -->
+            <div id="textCardComposer" class="text-card-composer hidden">
+              <div style="font-size:13px;font-weight:800;margin-bottom:8px;color:var(--blue-dark);">
+                Add a Quick Text-Only Card (Secret Word or Guess)
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+                <select id="textCardType" class="select" style="flex:0 0 140px;">
+                  <option value="secret">Secret Word</option>
+                  <option value="guess">Guess</option>
+                </select>
+                <input type="text" id="textCardInput" class="input" style="flex:1 1 180px;" placeholder="e.g., Submarine Sandwich" />
+              </div>
+              <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button type="button" id="cancelTextCardBtn" class="btn btn-sm btn-soft">Cancel</button>
+                <button type="button" id="addTextCardBtn" class="btn btn-sm btn-primary">Add Card to Journal</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Game Details & Scanned Pages List -->
+        <div class="card">
+          <div class="notebook-spiral"></div>
+          <div class="card-body">
+            <h2 style="margin:0 0 12px;font-size:17px;font-weight:900;">Journal Details &amp; Pages</h2>
+
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+              <div>
+                <label for="draftTitleInput" style="display:block;font-size:12px;font-weight:800;color:var(--ink-muted);margin-bottom:4px;">
+                  Game Title (leave blank to auto-name "Start → End")
+                </label>
+                <input type="text" id="draftTitleInput" class="input" placeholder="e.g., Submarine Sandwich → Banana Boat" />
+              </div>
+              <div>
+                <label for="draftNotesInput" style="display:block;font-size:12px;font-weight:800;color:var(--ink-muted);margin-bottom:4px;">
+                  Game-Night Notes
+                </label>
+                <input type="text" id="draftNotesInput" class="input" placeholder="Who played? Why was everyone crying laughing?" />
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-size:13px;font-weight:800;color:var(--ink);">
+                Scanned Pages (<span id="draftPageCountLabel">0</span>)
+              </span>
+              <button type="button" id="clearDraftBtn" class="btn btn-sm btn-danger-soft">Clear Draft</button>
+            </div>
+
+            <div id="draftPagesList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
+
+            <button type="button" id="saveAndRevealBtn" class="btn btn-coral" style="width:100%;min-height:48px;font-size:15px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Save &amp; Reveal Journal
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== TAB 3: REVEAL PRESENTATION ===================== -->
+    <section id="view-reveal" class="hidden">
+      <div class="reveal-topbar">
+        <div style="flex:1 1 220px;">
+          <select id="revealGameSelect" class="select" aria-label="Select game to reveal"></select>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <button type="button" id="revealEditBtn" class="btn btn-soft">Edit</button>
+          <button type="button" id="revealShareBtn" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+              <polyline points="16 6 12 2 8 6"></polyline>
+              <line x1="12" y1="2" x2="12" y2="15"></line>
+            </svg>
+            Share Strip
+          </button>
+          <button type="button" id="revealDownloadBtn" class="btn btn-teal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Download PNG
+          </button>
+        </div>
+      </div>
+
+      <!-- Mode Switcher -->
+      <div class="mode-switcher" role="tablist">
+        <button type="button" class="mode-btn active" data-mode="flip" id="modeBtn-flip">
+          <span>🎭</span>
+          <span>Dramatic Flip</span>
+        </button>
+        <button type="button" class="mode-btn" data-mode="compare" id="modeBtn-compare">
+          <span>⚡</span>
+          <span>Started vs. Ended</span>
+        </button>
+        <button type="button" class="mode-btn" data-mode="comic" id="modeBtn-comic">
+          <span>👑</span>
+          <span>Comic Strip</span>
+        </button>
+      </div>
+
+      <div id="revealEmptyState" class="empty-state hidden">
+        <h3 style="margin:0 0 6px;">No Games to Reveal Yet</h3>
+        <p style="margin:0 0 14px;color:var(--ink-muted);font-size:13px;">Scan your first Telestrations journal to unlock presentation modes.</p>
+        <button type="button" id="revealGoScanBtn" class="btn btn-coral">Scan a Journal</button>
+      </div>
+
+      <!-- Mode 1: Dramatic Flip -->
+      <div id="revealMode-flip" class="card">
+        <div class="notebook-spiral"></div>
+        <div class="card-body flip-stage">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span id="flipPagePill" class="pill pill-secret">Page 1</span>
+              <span id="flipPageCounter" style="font-size:12px;font-weight:800;color:var(--ink-muted);">1 / 5</span>
+            </div>
+            <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--ink-muted);cursor:pointer;">
+              <input type="checkbox" id="autoCoverCheckbox" checked />
+              <span>Suspense Cover</span>
+            </label>
+          </div>
+
+          <div class="flip-card-frame" id="flipSwipeArea">
+            <img id="flipPageImg" src="" alt="Journal Page" />
+            <div id="suspenseCover" class="suspense-cover hidden" role="button" tabindex="0">
+              <div class="suspense-cover-badge" id="suspenseBadge">Page 2 · Sketch</div>
+              <h3>Tap to Reveal!</h3>
+              <p>Swipe left/right or tap anywhere to lift the cover</p>
+            </div>
+          </div>
+
+          <div id="flipPageCaption" class="flip-caption"></div>
+
+          <div style="text-align:center;margin-top:4px;">
+            <button type="button" id="flipCrownBtn" class="btn btn-sm btn-soft">
+              👑 Crown Derailment Moment
+            </button>
+          </div>
+
+          <div class="flip-nav">
+            <button type="button" id="flipPrevBtn" class="btn btn-soft">← Prev</button>
+            <div id="flipDots" class="flip-dots"></div>
+            <button type="button" id="flipNextBtn" class="btn btn-primary">Next →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode 2: How It Started vs. Ended -->
+      <div id="revealMode-compare" class="hidden">
+        <div class="compare-grid">
+          <div class="card">
+            <div class="notebook-spiral"></div>
+            <div class="card-body">
+              <span class="pill pill-secret">How It Started</span>
+              <div class="compare-img-box">
+                <img id="compareStartImg" src="" alt="First Page" />
+              </div>
+              <div id="compareStartCaption" class="comic-panel-caption"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="notebook-spiral"></div>
+            <div class="card-body">
+              <span class="pill pill-coral pill-sketch">How It Ended</span>
+              <div class="compare-img-box">
+                <img id="compareEndImg" src="" alt="Last Page" />
+              </div>
+              <div id="compareEndCaption" class="comic-panel-caption"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <h3 style="margin:0 0 12px;text-align:center;font-size:16px;font-weight:900;">The Full Evolution Chain</h3>
+            <div id="compareChainList" class="chain-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode 3: Comic Strip -->
+      <div id="revealMode-comic" class="card hidden">
+        <div class="notebook-spiral"></div>
+        <div class="card-body">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;">
+            <div>
+              <h2 id="comicTitle" style="margin:0;font-size:20px;font-weight:900;"></h2>
+              <p id="comicNotes" style="margin:2px 0 0;font-size:13px;color:var(--ink-muted);"></p>
+            </div>
+            <span class="pill pill-crown">👑 Tap any panel to crown the Derailment Moment</span>
+          </div>
+          <div id="comicStripGrid" class="comic-grid"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>Telestrations Vault · 100% Offline Local Archive</span>
+    <span>·</span>
+    <button type="button" id="footerDiagBtn" class="btn btn-sm btn-soft">System Diagnostics</button>
+  </footer>
+
+  <!-- =========================================================================
+       DIAGNOSTICS MODAL
+       ========================================================================= -->
+  <div id="diagModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="diagModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="diagModalTitle">System Diagnostics</h3>
+        <button type="button" id="closeDiagBtn" class="btn btn-sm btn-soft">Close</button>
+      </div>
+      <div class="modal-body">
+        <table class="diag-table">
+          <tbody>
+            <tr><th>Storage Backend</th><td id="diagStorage">—</td></tr>
+            <tr><th>Saved Games</th><td id="diagGamesCount">—</td></tr>
+            <tr><th>Context / Origin</th><td id="diagOrigin">—</td></tr>
+            <tr><th>Web Share API</th><td id="diagShare">—</td></tr>
+            <tr><th>Camera API</th><td id="diagCamera">—</td></tr>
+            <tr><th>User Agent</th><td id="diagUA">—</td></tr>
+          </tbody>
+        </table>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <strong style="font-size:12px;">Logged Events &amp; Errors</strong>
+          <button type="button" id="clearDiagLogsBtn" class="btn btn-sm btn-soft">Clear Logs</button>
+        </div>
+        <div id="diagLogsBox" class="diag-log-list">No errors or warnings logged.</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="copyDiagBtn" class="btn btn-sm btn-primary">Copy Diagnostics</button>
+        <button type="button" id="closeDiagBtn2" class="btn btn-sm btn-soft">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       CUSTOM CONFIRM MODAL (Never uses window.confirm or window.alert)
+       ========================================================================= -->
+  <div id="confirmModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+    <div class="modal-card" style="max-width:400px;">
+      <div class="modal-header">
+        <h3 id="confirmModalTitle">Confirm Action</h3>
+      </div>
+      <div class="modal-body">
+        <p id="confirmModalMessage" style="margin:0;font-size:14px;font-weight:600;"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="confirmCancelBtn" class="btn btn-sm btn-soft">Cancel</button>
+        <button type="button" id="confirmOkBtn" class="btn btn-sm btn-coral">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- =========================================================================
+       MAIN APPLICATION SCRIPT (100% VANILLA JS, ZERO EXTERNAL DEPENDENCIES)
+       ========================================================================= -->
+  <script>
+    (function () {
+      'use strict';
+
+      // =======================================================================
+      // 1. UTILITIES & HELPERS
+      // =======================================================================
+      function logInfo(msg, meta) {
+        if (window.__TV_LOG) window.__TV_LOG('INFO', msg, meta || '', '');
+      }
+
+      function logWarn(msg, meta) {
+        if (window.__TV_LOG) window.__TV_LOG('WARN', msg, meta || '', '');
+      }
+
+      function generateId() {
+        return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
+      }
+
+      function escHtml(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function formatDate(ts) {
+        try {
+          var d = new Date(ts || Date.now());
+          return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+        } catch (e) {
+          return 'Recent';
+        }
+      }
+
+      /**
+       * Safe rounded rectangle helper for Canvas (compatible with all iOS Safari versions).
+       */
+      function drawRoundedRect(ctx, x, y, w, h, r) {
+        var radius = Math.min(r, w / 2, h / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + w, y, x + w, y + h, radius);
+        ctx.arcTo(x + w, y + h, x, y + h, radius);
+        ctx.arcTo(x, y + h, x, y, radius);
+        ctx.arcTo(x, y, x + w, y, radius);
+        ctx.closePath();
+      }
+
+      /**
+       * Show an ephemeral toast message.
+       */
+      function showToast(message, type) {
+        var container = document.getElementById('toastContainer');
+        if (!container) return;
+        var toast = document.createElement('div');
+        toast.className = 'toast' + (type ? ' toast-' + type : '');
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(function () {
+          toast.style.opacity = '0';
+          toast.style.transition = 'opacity 0.25s ease';
+          setTimeout(function () {
+            if (toast.parentNode) toast.parentNode.removeChild(toast);
+          }, 260);
+        }, 2600);
+      }
+
+      /**
+       * Custom confirmation dialog (replaces browser confirm()).
+       */
+      var confirmResolver = null;
+      function askConfirm(title, message, okLabel) {
+        return new Promise(function (resolve) {
+          confirmResolver = resolve;
+          document.getElementById('confirmModalTitle').textContent = title || 'Confirm';
+          document.getElementById('confirmModalMessage').textContent = message || 'Are you sure?';
+          document.getElementById('confirmOkBtn').textContent = okLabel || 'Confirm';
+          document.getElementById('confirmModal').classList.remove('hidden');
+        });
+      }
+
+      function closeConfirm(result) {
+        document.getElementById('confirmModal').classList.add('hidden');
+        if (confirmResolver) {
+          var fn = confirmResolver;
+          confirmResolver = null;
+          fn(Boolean(result));
+        }
+      }
+
+      /**
+       * Auto-alternating page type & label helpers.
+       */
+      function getDefaultPageType(index) {
+        if (index === 0) return 'secret';
+        return index % 2 === 1 ? 'sketch' : 'guess';
+      }
+
+      function getPageTypeName(type) {
+        if (type === 'secret') return 'Secret Word';
+        if (type === 'sketch') return 'Sketch';
+        return 'Guess';
+      }
+
+      function getPageLabel(index, type) {
+        return 'Page ' + (index + 1) + ' · ' + getPageTypeName(type);
+      }
+
+      function getPillClass(type) {
+        if (type === 'secret') return 'pill-secret';
+        if (type === 'sketch') return 'pill-sketch';
+        return 'pill-guess';
+      }
+
+      // =======================================================================
+      // 2. SAFE STORAGE LAYER (IndexedDB -> localStorage -> Memory Fallback)
+      // =======================================================================
+      var StorageEngine = {
+        dbName: 'TelestrationsVaultDB',
+        storeName: 'vault',
+        lsKey: 'telestrations_vault_games_v2',
+        db: null,
+        backend: 'Initializing...',
+        memoryGames: null,
+
+        init: function () {
+          var self = this;
+          return new Promise(function (resolve) {
+            var settled = false;
+            function finish(backendName) {
+              if (settled) return;
+              settled = true;
+              self.backend = backendName;
+              logInfo('Storage initialized: ' + backendName, 'StorageEngine');
+              resolve(backendName);
+            }
+
+            // Safety timeout in case iOS Safari hangs on IndexedDB open
+            var timer = setTimeout(function () {
+              if (!settled) {
+                logWarn('IndexedDB open timed out, falling back', 'StorageEngine');
+                self.tryLocalStorageFallback(finish);
+              }
+            }, 1800);
+
+            try {
+              if (typeof window.indexedDB === 'undefined' || !window.indexedDB) {
+                clearTimeout(timer);
+                self.tryLocalStorageFallback(finish);
+                return;
+              }
+              var req = window.indexedDB.open(self.dbName, 1);
+              req.onupgradeneeded = function (ev) {
+                try {
+                  var db = ev.target.result;
+                  if (!db.objectStoreNames.contains(self.storeName)) {
+                    db.createObjectStore(self.storeName);
+                  }
+                } catch (upErr) {
+                  logWarn('IndexedDB upgrade error: ' + upErr.message, 'StorageEngine');
+                }
+              };
+              req.onsuccess = function (ev) {
+                clearTimeout(timer);
+                self.db = ev.target.result;
+                finish('IndexedDB');
+              };
+              req.onerror = function () {
+                clearTimeout(timer);
+                logWarn('IndexedDB unavailable, trying localStorage', 'StorageEngine');
+                self.tryLocalStorageFallback(finish);
+              };
+              req.onblocked = function () {
+                clearTimeout(timer);
+                logWarn('IndexedDB blocked, trying localStorage', 'StorageEngine');
+                self.tryLocalStorageFallback(finish);
+              };
+            } catch (err) {
+              clearTimeout(timer);
+              logWarn('IndexedDB threw: ' + err.message, 'StorageEngine');
+              self.tryLocalStorageFallback(finish);
+            }
+          });
+        },
+
+        tryLocalStorageFallback: function (finish) {
+          try {
+            var testKey = '__tv_ls_test__';
+            window.localStorage.setItem(testKey, '1');
+            window.localStorage.removeItem(testKey);
+            finish('localStorage');
+          } catch (err) {
+            logWarn('localStorage unavailable: ' + err.message, 'StorageEngine');
+            finish('Memory (Session Only)');
+          }
+        },
+
+        loadGames: function () {
+          var self = this;
+          return new Promise(function (resolve) {
+            if (self.backend === 'IndexedDB' && self.db) {
+              try {
+                var tx = self.db.transaction(self.storeName, 'readonly');
+                var store = tx.objectStore(self.storeName);
+                var req = store.get('games');
+                req.onsuccess = function () {
+                  resolve(Array.isArray(req.result) ? req.result : null);
+                };
+                req.onerror = function () {
+                  logWarn('IndexedDB read failed', 'StorageEngine');
+                  resolve(self.readLocalStorage());
+                };
+                return;
+              } catch (err) {
+                logWarn('IndexedDB load threw: ' + err.message, 'StorageEngine');
+              }
+            }
+            if (self.backend === 'localStorage') {
+              resolve(self.readLocalStorage());
+              return;
+            }
+            resolve(self.memoryGames);
+          });
+        },
+
+        readLocalStorage: function () {
+          try {
+            var raw = window.localStorage.getItem(this.lsKey);
+            if (!raw) return null;
+            var parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : null;
+          } catch (err) {
+            logWarn('localStorage parse failed: ' + err.message, 'StorageEngine');
+            return null;
+          }
+        },
+
+        saveGames: function (games) {
+          var self = this;
+          self.memoryGames = games;
+          return new Promise(function (resolve) {
+            if (self.backend === 'IndexedDB' && self.db) {
+              try {
+                var tx = self.db.transaction(self.storeName, 'readwrite');
+                var store = tx.objectStore(self.storeName);
+                store.put(games, 'games');
+                tx.oncomplete = function () { resolve(true); };
+                tx.onerror = function () {
+                  logWarn('IndexedDB write failed, falling back to localStorage', 'StorageEngine');
+                  self.writeLocalStorage(games);
+                  resolve(false);
+                };
+                return;
+              } catch (err) {
+                logWarn('IndexedDB save threw: ' + err.message, 'StorageEngine');
+              }
+            }
+            if (self.backend === 'localStorage') {
+              resolve(self.writeLocalStorage(games));
+              return;
+            }
+            resolve(true);
+          });
+        },
+
+        writeLocalStorage: function (games) {
+          try {
+            window.localStorage.setItem(this.lsKey, JSON.stringify(games));
+            return true;
+          } catch (err) {
+            logWarn('localStorage quota/write error: ' + err.message, 'StorageEngine');
+            this.backend = 'Memory (Session Only)';
+            showToast('Storage full — keeping changes in session memory.', 'warn');
+            return false;
+          }
+        }
+      };
+
+      // =======================================================================
+      // 3. CANVAS GENERATORS (TEXT CARDS & OFFLINE SAMPLE GAMES)
+      // =======================================================================
+
+      /**
+       * Render a crisp notebook text card (Secret Word or Guess) to a JPEG data URL.
+       */
+      function renderTextCardImage(text, type) {
+        var canvas = document.createElement('canvas');
+        canvas.width = 640;
+        canvas.height = 480;
+        var ctx = canvas.getContext('2d');
+
+        // Paper background
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, 640, 480);
+
+        // Notebook ruled lines
+        ctx.strokeStyle = '#E2E8F0';
+        ctx.lineWidth = 2;
+        for (var y = 110; y < 440; y += 46) {
+          ctx.beginPath();
+          ctx.moveTo(40, y);
+          ctx.lineTo(600, y);
+          ctx.stroke();
+        }
+
+        // Top color stripe
+        ctx.fillStyle = type === 'secret' ? '#2563EB' : '#0D9488';
+        ctx.fillRect(0, 0, 640, 20);
+
+        // Header badge
+        ctx.fillStyle = type === 'secret' ? '#EFF6FF' : '#F0FDFA';
+        drawRoundedRect(ctx, 210, 42, 220, 40, 20);
+        ctx.fill();
+        ctx.fillStyle = type === 'secret' ? '#1D4ED8' : '#0F766E';
+        ctx.font = 'bold 18px -apple-system, BlinkMacSystemFont, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(game.title || 'Telestrations Journal', canvasW / 2, 58, canvasW - 80);
+        ctx.fillText(type === 'secret' ? 'SECRET WORD' : 'GUESS', 320, 63);
 
-        ctx.fillStyle = '#64748B';
-        ctx.font = '600 20px Inter, sans-serif';
-        const subtitle = [game.owner, formatDate(game.createdAt), `${pages.length} Pages`].filter(Boolean).join('  ·  ');
-        ctx.fillText(subtitle, canvasW / 2, 102, canvasW - 80);
+        // Main handwritten-style text with word wrapping
+        ctx.fillStyle = '#1E293B';
+        ctx.font = 'bold 48px "Marker Felt", "Comic Sans MS", cursive, sans-serif';
+        var words = String(text || '???').split(/\s+/);
+        var lines = [];
+        var current = '';
+        for (var i = 0; i < words.length; i++) {
+          var test = current ? current + ' ' + words[i] : words[i];
+          if (ctx.measureText(test).width > 520 && current) {
+            lines.push(current);
+            current = words[i];
+          } else {
+            current = test;
+          }
+        }
+        if (current) lines.push(current);
 
-        // Load all page images
-        const loadedImgs = await Promise.all(
-          pages.map(
-            (p) =>
-              new Promise((res) => {
-                const im = new Image();
-                im.onload = () => res(im);
-                im.onerror = () => res(null);
-                im.src = p.imageData;
-              })
-          )
-        );
+        var startY = 265 - ((lines.length - 1) * 32);
+        for (var j = 0; j < lines.length; j++) {
+          ctx.fillText(lines[j], 320, startY + j * 64, 540);
+        }
 
-        // Draw each panel
-        pages.forEach((page, idx) => {
-          const col = idx % cols;
-          const row = Math.floor(idx / cols);
-          const x = pad + col * (panelW + gap);
-          const y = headerH + row * (panelH + gap);
-          const isDerail = page.id === game.derailmentPageId;
+        return canvas.toDataURL('image/jpeg', 0.84);
+      }
 
-          // Card container
-          ctx.fillStyle = '#FFFFFF';
-          ctx.strokeStyle = isDerail ? '#F59E0B' : '#CBD5E1';
-          ctx.lineWidth = isDerail ? 6 : 3;
+      /**
+       * Render a playful dry-erase marker sketch on a whiteboard canvas.
+       */
+      function renderSampleSketch(kind) {
+        var canvas = document.createElement('canvas');
+        canvas.width = 640;
+        canvas.height = 480;
+        var ctx = canvas.getContext('2d');
+
+        // Slightly glossy whiteboard background
+        ctx.fillStyle = '#FCFBF9';
+        ctx.fillRect(0, 0, 640, 480);
+        ctx.strokeStyle = '#E2E8F0';
+        ctx.lineWidth = 6;
+        drawRoundedRect(ctx, 16, 16, 608, 448, 22);
+        ctx.stroke();
+
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        if (kind === 'sub-sandwich') {
+          // Periscope sticking out of hoagie
+          ctx.strokeStyle = '#1E293B';
+          ctx.lineWidth = 10;
           ctx.beginPath();
-          ctx.roundRect(x, y, panelW, panelH, 22);
+          ctx.moveTo(320, 175);
+          ctx.lineTo(320, 95);
+          ctx.lineTo(368, 95);
+          ctx.stroke();
+          ctx.strokeStyle = '#2563EB';
+          ctx.lineWidth = 6;
+          ctx.beginPath();
+          ctx.arc(374, 95, 10, 0, Math.PI * 2);
+          ctx.stroke();
+
+          // Top bun
+          ctx.fillStyle = '#FDE68A';
+          ctx.strokeStyle = '#92400E';
+          ctx.lineWidth = 7;
+          ctx.beginPath();
+          ctx.ellipse(320, 230, 185, 62, 0, Math.PI, Math.PI * 2);
+          ctx.closePath();
           ctx.fill();
           ctx.stroke();
 
-          // Page image fitted cleanly inside frame
-          const im = loadedImgs[idx];
-          if (im) {
-            ctx.save();
-            ctx.beginPath();
-            ctx.roundRect(x + 14, y + 14, panelW - 28, imgH - 14, 14);
-            ctx.clip();
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(x + 14, y + 14, panelW - 28, imgH - 14);
+          // Lettuce squiggle
+          ctx.strokeStyle = '#16A34A';
+          ctx.lineWidth = 10;
+          ctx.beginPath();
+          for (var x = 135; x <= 505; x += 26) {
+            ctx.lineTo(x, 244 + (x % 52 === 0 ? -9 : 9));
+          }
+          ctx.stroke();
 
-            const boxW = panelW - 28;
-            const boxH = imgH - 14;
-            const ratio = Math.min(boxW / im.width, boxH / im.height);
-            const dw = im.width * ratio;
-            const dh = im.height * ratio;
-            ctx.drawImage(im, x + 14 + (boxW - dw) / 2, y + 14 + (boxH - dh) / 2, dw, dh);
-            ctx.restore();
+          // Tomato & cheese
+          ctx.fillStyle = '#EF4444';
+          ctx.fillRect(160, 256, 320, 18);
+          ctx.fillStyle = '#F59E0B';
+          ctx.fillRect(150, 276, 340, 16);
+
+          // Bottom bun
+          ctx.fillStyle = '#FDE68A';
+          ctx.strokeStyle = '#92400E';
+          ctx.lineWidth = 7;
+          ctx.beginPath();
+          ctx.ellipse(320, 294, 182, 46, 0, 0, Math.PI);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          // Portholes on the bread
+          ctx.strokeStyle = '#2563EB';
+          ctx.lineWidth = 5;
+          [225, 320, 415].forEach(function (px) {
+            ctx.beginPath();
+            ctx.arc(px, 312, 13, 0, Math.PI * 2);
+            ctx.stroke();
+          });
+        } else if (kind === 'banana-boat') {
+          // Ocean waves
+          ctx.strokeStyle = '#2563EB';
+          ctx.lineWidth = 8;
+          for (var wy = 330; wy <= 395; wy += 32) {
+            ctx.beginPath();
+            for (var wx = 55; wx <= 585; wx += 44) {
+              ctx.quadraticCurveTo(wx + 22, wy - 16, wx + 44, wy);
+            }
+            ctx.stroke();
           }
 
-          // Type Pill
-          const pillColor = page.type === 'sketch' ? '#EF4444' : idx === 0 ? '#2563EB' : '#0D9488';
-          ctx.fillStyle = pillColor;
+          // Giant yellow banana hull
+          ctx.fillStyle = '#FACC15';
+          ctx.strokeStyle = '#A16207';
+          ctx.lineWidth = 8;
           ctx.beginPath();
-          ctx.roundRect(x + 22, y + 22, 170, 32, 16);
+          ctx.moveTo(130, 210);
+          ctx.quadraticCurveTo(320, 405, 515, 200);
+          ctx.quadraticCurveTo(325, 305, 130, 210);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          // Stick figure sailors waving
+          ctx.strokeStyle = '#1E293B';
+          ctx.lineWidth = 6;
+          [255, 375].forEach(function (sx) {
+            ctx.beginPath();
+            ctx.arc(sx, 205, 16, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(sx, 222);
+            ctx.lineTo(sx, 270);
+            ctx.moveTo(sx - 24, 232);
+            ctx.lineTo(sx, 245);
+            ctx.lineTo(sx + 26, 224);
+            ctx.stroke();
+          });
+
+          // Sun in corner
+          ctx.fillStyle = '#F59E0B';
+          ctx.beginPath();
+          ctx.arc(540, 88, 30, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (kind === 'cat-burglar') {
+          // Cat head & ears
+          ctx.strokeStyle = '#1E293B';
+          ctx.lineWidth = 7;
+          ctx.beginPath();
+          ctx.arc(245, 215, 68, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(190, 170); ctx.lineTo(175, 112); ctx.lineTo(226, 150);
+          ctx.moveTo(264, 150); ctx.lineTo(315, 112); ctx.lineTo(300, 170);
+          ctx.stroke();
+
+          // Burglar mask
+          ctx.fillStyle = '#1E293B';
+          drawRoundedRect(ctx, 188, 190, 114, 34, 16);
           ctx.fill();
           ctx.fillStyle = '#FFFFFF';
-          ctx.font = '800 15px Inter, sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText(getPageLabel(idx, page.type).toUpperCase(), x + 107, y + 39);
+          ctx.beginPath();
+          ctx.arc(220, 207, 9, 0, Math.PI * 2);
+          ctx.arc(270, 207, 9, 0, Math.PI * 2);
+          ctx.fill();
 
-          // Derailment Crown Badge
-          if (isDerail) {
-            ctx.fillStyle = '#F59E0B';
-            ctx.beginPath();
-            ctx.roundRect(x + panelW - 188, y + 22, 166, 32, 16);
-            ctx.fill();
-            ctx.fillStyle = '#1E293B';
-            ctx.font = '800 14px Inter, sans-serif';
-            ctx.fillText('👑 DERAILMENT!', x + panelW - 105, y + 39);
+          // Whiskers
+          ctx.strokeStyle = '#1E293B';
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(185, 236); ctx.lineTo(140, 232);
+          ctx.moveTo(185, 248); ctx.lineTo(142, 256);
+          ctx.moveTo(305, 236); ctx.lineTo(350, 232);
+          ctx.moveTo(305, 248); ctx.lineTo(348, 256);
+          ctx.stroke();
+
+          // Money bag with $
+          ctx.fillStyle = '#FEF3C7';
+          ctx.strokeStyle = '#0D9488';
+          ctx.lineWidth = 7;
+          ctx.beginPath();
+          ctx.ellipse(455, 295, 76, 86, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = '#0D9488';
+          ctx.font = 'bold 64px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('$', 455, 302);
+        } else if (kind === 'raccoon-accountant') {
+          // Desk
+          ctx.fillStyle = '#E2E8F0';
+          ctx.strokeStyle = '#1E293B';
+          ctx.lineWidth = 7;
+          ctx.fillRect(90, 295, 460, 115);
+          ctx.strokeRect(90, 295, 460, 115);
+
+          // Raccoon head
+          ctx.fillStyle = '#CBD5E1';
+          ctx.beginPath();
+          ctx.ellipse(320, 185, 72, 58, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          // Ears
+          ctx.beginPath();
+          ctx.arc(262, 134, 20, 0, Math.PI * 2);
+          ctx.arc(378, 134, 20, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          // Raccoon mask + glasses
+          ctx.fillStyle = '#334155';
+          ctx.beginPath();
+          ctx.ellipse(290, 184, 22, 16, -0.2, 0, Math.PI * 2);
+          ctx.ellipse(350, 184, 22, 16, 0.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#EF4444';
+          ctx.lineWidth = 5;
+          ctx.strokeRect(268, 168, 44, 30);
+          ctx.strokeRect(328, 168, 44, 30);
+          ctx.beginPath();
+          ctx.moveTo(312, 182); ctx.lineTo(328, 182);
+          ctx.stroke();
+
+          // Tie
+          ctx.fillStyle = '#2563EB';
+          ctx.beginPath();
+          ctx.moveTo(320, 245);
+          ctx.lineTo(304, 295);
+          ctx.lineTo(336, 295);
+          ctx.closePath();
+          ctx.fill();
+
+          // TAXES ledger on desk
+          ctx.fillStyle = '#FFFFFF';
+          ctx.strokeStyle = '#1E293B';
+          ctx.lineWidth = 5;
+          ctx.fillRect(140, 322, 160, 62);
+          ctx.strokeRect(140, 322, 160, 62);
+          ctx.fillStyle = '#DC2626';
+          ctx.font = 'bold 28px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('TAXES', 220, 355);
+
+          // Calculator
+          ctx.fillStyle = '#94A3B8';
+          ctx.fillRect(380, 320, 110, 66);
+          ctx.strokeRect(380, 320, 110, 66);
+          ctx.fillStyle = '#ECFCCB';
+          ctx.fillRect(394, 330, 82, 22);
+        }
+
+        return canvas.toDataURL('image/jpeg', 0.84);
+      }
+
+      /**
+       * Create the 2 built-in offline sample games on first load.
+       */
+      function createSampleGames() {
+        var derail1 = generateId();
+        var derail2 = generateId();
+        return [
+          {
+            id: generateId(),
+            title: 'Submarine Sandwich → Banana Boat',
+            notes: 'Friday game night — the periscope on the hoagie completely broke everyone.',
+            createdAt: Date.now() - 86400000 * 2,
+            derailmentPageId: derail1,
+            pages: [
+              { id: generateId(), type: 'secret', caption: 'Submarine Sandwich', imageData: renderTextCardImage('Submarine Sandwich', 'secret') },
+              { id: generateId(), type: 'sketch', caption: 'Hoagie with a periscope & portholes', imageData: renderSampleSketch('sub-sandwich') },
+              { id: generateId(), type: 'guess',  caption: 'Yellow Periscope Hoagie', imageData: renderTextCardImage('Yellow Periscope Hoagie', 'guess') },
+              { id: derail1,      type: 'sketch', caption: 'Sailors cruising on a giant banana', imageData: renderSampleSketch('banana-boat') },
+              { id: generateId(), type: 'guess',  caption: 'Banana Boat', imageData: renderTextCardImage('Banana Boat', 'guess') }
+            ]
+          },
+          {
+            id: generateId(),
+            title: 'Cat Burglar → Raccoon Accountant',
+            notes: 'Somehow a feline heist turned into tax season.',
+            createdAt: Date.now() - 86400000 * 5,
+            derailmentPageId: derail2,
+            pages: [
+              { id: generateId(), type: 'secret', caption: 'Cat Burglar', imageData: renderTextCardImage('Cat Burglar', 'secret') },
+              { id: generateId(), type: 'sketch', caption: 'Masked cat with a giant sack of cash', imageData: renderSampleSketch('cat-burglar') },
+              { id: generateId(), type: 'guess',  caption: 'Masked Trash Cat with Money', imageData: renderTextCardImage('Masked Trash Cat with Money', 'guess') },
+              { id: derail2,      type: 'sketch', caption: 'Raccoon doing taxes with a calculator', imageData: renderSampleSketch('raccoon-accountant') },
+              { id: generateId(), type: 'guess',  caption: 'Raccoon Accountant', imageData: renderTextCardImage('Raccoon Accountant', 'guess') }
+            ]
           }
+        ];
+      }
 
-          // Caption Text
-          ctx.fillStyle = '#1E293B';
-          ctx.font = 'bold 30px "Patrick Hand", cursive, sans-serif';
+      // =======================================================================
+      // 4. APPLICATION STATE
+      // =======================================================================
+      var AppState = {
+        activeTab: 'history',
+        games: [],
+        searchQuery: '',
+
+        // Scan draft state
+        draft: {
+          editingGameId: null,
+          title: '',
+          notes: '',
+          pages: [] // { id, type, caption, imageData }
+        },
+        scanFilter: 'pop', // 'normal' | 'pop' | 'high'
+        cameraStream: null,
+
+        // Reveal state
+        revealGameId: null,
+        revealMode: 'flip', // 'flip' | 'compare' | 'comic'
+        flipIndex: 0,
+        coverHidden: false,
+        autoCover: true
+      };
+
+      // =======================================================================
+      // 5. DRY-ERASE IMAGE PROCESSING & ROTATION (CANVAS)
+      // =======================================================================
+
+      /**
+       * Process an image source (HTMLImageElement or HTMLVideoElement) with
+       * resizing (max 960px) and Dry-Erase Scan Enhancer filter.
+       */
+      function processImageToDataUrl(source, srcW, srcH, filterMode) {
+        var maxDim = 960;
+        var scale = Math.min(1, maxDim / Math.max(srcW, srcH));
+        var w = Math.max(1, Math.round(srcW * scale));
+        var h = Math.max(1, Math.round(srcH * scale));
+
+        var canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(source, 0, 0, w, h);
+
+        if (filterMode === 'pop' || filterMode === 'high') {
+          try {
+            var imgData = ctx.getImageData(0, 0, w, h);
+            var d = imgData.data;
+            var contrast = filterMode === 'high' ? 1.75 : 1.32;
+            var brightness = filterMode === 'high' ? 18 : 10;
+            var satBoost = filterMode === 'high' ? 0.85 : 1.25;
+
+            for (var i = 0; i < d.length; i += 4) {
+              var r = d[i];
+              var g = d[i + 1];
+              var b = d[i + 2];
+
+              // Contrast + Brightness
+              r = (r - 128) * contrast + 128 + brightness;
+              g = (g - 128) * contrast + 128 + brightness;
+              b = (b - 128) * contrast + 128 + brightness;
+
+              // Saturation adjustment to pop dry-erase marker colors
+              var gray = 0.299 * r + 0.587 * g + 0.114 * b;
+              r = gray + (r - gray) * satBoost;
+              g = gray + (g - gray) * satBoost;
+              b = gray + (b - gray) * satBoost;
+
+              // Gently whiten near-white whiteboard backgrounds
+              if (filterMode === 'high' && r > 215 && g > 215 && b > 215) {
+                r = 255; g = 255; b = 255;
+              }
+
+              d[i] = r < 0 ? 0 : (r > 255 ? 255 : r);
+              d[i + 1] = g < 0 ? 0 : (g > 255 ? 255 : g);
+              d[i + 2] = b < 0 ? 0 : (b > 255 ? 255 : b);
+            }
+            ctx.putImageData(imgData, 0, 0);
+          } catch (pixErr) {
+            logWarn('Filter pixel pass skipped: ' + pixErr.message, 'ImageFilter');
+          }
+        }
+
+        return canvas.toDataURL('image/jpeg', 0.82);
+      }
+
+      /**
+       * Rotate a data URL image 90 degrees clockwise.
+       */
+      function rotateImageDataUrl(dataUrl) {
+        return new Promise(function (resolve, reject) {
+          var img = new Image();
+          img.onload = function () {
+            var canvas = document.createElement('canvas');
+            canvas.width = img.height;
+            canvas.height = img.width;
+            var ctx = canvas.getContext('2d');
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(Math.PI / 2);
+            ctx.drawImage(img, -img.width / 2, -img.height / 2);
+            resolve(canvas.toDataURL('image/jpeg', 0.84));
+          };
+          img.onerror = function () { reject(new Error('Could not rotate image')); };
+          img.src = dataUrl;
+        });
+      }
+
+      // =======================================================================
+      // 6. TAB SWITCHING & RENDERING
+      // =======================================================================
+      function switchTab(tabName) {
+        AppState.activeTab = tabName;
+        if (tabName !== 'scan') {
+          stopCamera();
+        }
+        ['history', 'scan', 'reveal'].forEach(function (t) {
+          document.getElementById('view-' + t).classList.toggle('hidden', t !== tabName);
+          document.getElementById('tabBtn-' + t).classList.toggle('active', t === tabName);
+        });
+
+        if (tabName === 'history') renderHistory();
+        if (tabName === 'scan') renderDraft();
+        if (tabName === 'reveal') renderReveal();
+      }
+
+      function updateNavBadges() {
+        document.getElementById('historyCountBadge').textContent = String(AppState.games.length);
+        document.getElementById('draftCountBadge').textContent = String(AppState.draft.pages.length);
+      }
+
+      // =======================================================================
+      // 7. HISTORY TAB RENDERING
+      // =======================================================================
+      function renderHistory() {
+        updateNavBadges();
+        var listEl = document.getElementById('gamesList');
+        var q = AppState.searchQuery.trim().toLowerCase();
+
+        var filtered = AppState.games.filter(function (g) {
+          if (!q) return true;
+          if ((g.title || '').toLowerCase().indexOf(q) !== -1) return true;
+          if ((g.notes || '').toLowerCase().indexOf(q) !== -1) return true;
+          return (g.pages || []).some(function (p) {
+            return (p.caption || '').toLowerCase().indexOf(q) !== -1;
+          });
+        });
+
+        if (filtered.length === 0) {
+          listEl.innerHTML =
+            '<div class="empty-state">' +
+              '<div style="font-size:34px;margin-bottom:8px;">📒</div>' +
+              '<h3 style="margin:0 0 6px;">' + (q ? 'No Matching Games' : 'Your Vault is Empty') + '</h3>' +
+              '<p style="margin:0 0 14px;color:var(--ink-muted);font-size:13px;">' +
+                (q ? 'Try a different search keyword.' : 'Scan your first Telestrations journal to preserve the chaos!') +
+              '</p>' +
+              '<button type="button" class="btn btn-coral" data-action="go-scan">Scan a Journal</button>' +
+            '</div>';
+          return;
+        }
+
+        listEl.innerHTML = filtered.map(function (game) {
+          var pages = game.pages || [];
+          var derailPage = pages.find(function (p) { return p.id === game.derailmentPageId; });
+          var derailBadge = derailPage
+            ? '<span class="pill pill-crown">👑 Derailment: ' + escHtml(derailPage.caption || getPageTypeName(derailPage.type)) + '</span>'
+            : '';
+
+          var thumbsHtml = pages.map(function (p, idx) {
+            var isDerail = p.id === game.derailmentPageId;
+            return (
+              '<button type="button" class="thumb-item' + (isDerail ? ' is-derail' : '') + '" data-action="open-page" data-game-id="' + escHtml(game.id) + '" data-page-idx="' + idx + '">' +
+                '<div class="thumb-img-wrap">' +
+                  '<img src="' + escHtml(p.imageData) + '" alt="' + escHtml(p.caption || 'Page') + '" loading="lazy" />' +
+                  (isDerail ? '<span class="thumb-crown-dot" title="Derailment Moment">👑</span>' : '') +
+                '</div>' +
+                '<div class="thumb-type">' + escHtml(getPageTypeName(p.type)) + '</div>' +
+                '<div class="thumb-caption">' + escHtml(p.caption || 'Page ' + (idx + 1)) + '</div>' +
+              '</button>'
+            );
+          }).join('');
+
+          return (
+            '<article class="card" data-game-card="' + escHtml(game.id) + '">' +
+              '<div class="notebook-spiral"></div>' +
+              '<div class="card-body">' +
+                '<div class="game-card-header">' +
+                  '<div style="min-width:0;flex:1 1 220px;">' +
+                    '<h2 class="game-title">' + escHtml(game.title || 'Untitled Journal') + '</h2>' +
+                    '<div class="game-meta">' +
+                      '<span>' + escHtml(formatDate(game.createdAt)) + '</span>' +
+                      '<span>·</span>' +
+                      '<span>' + pages.length + ' pages</span>' +
+                      derailBadge +
+                    '</div>' +
+                  '</div>' +
+                  '<div class="game-actions">' +
+                    '<button type="button" class="btn btn-sm btn-primary" data-action="reveal" data-game-id="' + escHtml(game.id) + '">▶ Reveal</button>' +
+                    '<button type="button" class="btn btn-sm btn-teal" data-action="share-strip" data-game-id="' + escHtml(game.id) + '">Share Strip</button>' +
+                    '<button type="button" class="btn btn-sm btn-teal-soft" data-action="download-png" data-game-id="' + escHtml(game.id) + '">PNG</button>' +
+                    '<button type="button" class="btn btn-sm btn-soft" data-action="edit" data-game-id="' + escHtml(game.id) + '">Edit</button>' +
+                    '<button type="button" class="btn btn-sm btn-danger-soft" data-action="delete" data-game-id="' + escHtml(game.id) + '" title="Delete game">✕</button>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="thumb-strip">' + thumbsHtml + '</div>' +
+                '<div class="notes-inline-wrap">' +
+                  '<span class="notes-inline-label">📝 Notes:</span>' +
+                  '<input type="text" class="notes-inline-input" data-notes-game-id="' + escHtml(game.id) + '" value="' + escHtml(game.notes || '') + '" placeholder="Add game-night notes..." />' +
+                '</div>' +
+              '</div>' +
+            '</article>'
+          );
+        }).join('');
+      }
+
+      // =======================================================================
+      // 8. SCAN JOURNAL & LIVE CAMERA LOGIC
+      // =======================================================================
+      function startCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          showToast('Live camera unavailable here — use "Add Photos / Camera" instead.', 'warn');
+          return;
+        }
+
+        var video = document.getElementById('cameraVideo');
+        navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } },
+          audio: false
+        }).then(function (stream) {
+          AppState.cameraStream = stream;
+          video.srcObject = stream;
+          video.classList.remove('hidden');
+          document.getElementById('cameraPlaceholder').classList.add('hidden');
+          document.getElementById('cameraOverlay').classList.remove('hidden');
+          document.getElementById('cameraOverlayLabel').classList.remove('hidden');
+          document.getElementById('shutterBtn').classList.remove('hidden');
+          document.getElementById('toggleCameraLabel').textContent = 'Stop Camera';
+          applyVideoFilterPreview();
+          if (video.play) video.play().catch(function () {});
+        }).catch(function (err) {
+          logWarn('Camera access error: ' + (err && err.message ? err.message : err), 'Camera');
+          showToast('Camera blocked or unavailable. Use "Add Photos / Camera" button.', 'warn');
+        });
+      }
+
+      function stopCamera() {
+        if (AppState.cameraStream) {
+          try {
+            AppState.cameraStream.getTracks().forEach(function (t) { t.stop(); });
+          } catch (e) {}
+          AppState.cameraStream = null;
+        }
+        var video = document.getElementById('cameraVideo');
+        if (video) {
+          video.srcObject = null;
+          video.classList.add('hidden');
+        }
+        document.getElementById('cameraPlaceholder').classList.remove('hidden');
+        document.getElementById('cameraOverlay').classList.add('hidden');
+        document.getElementById('cameraOverlayLabel').classList.add('hidden');
+        document.getElementById('shutterBtn').classList.add('hidden');
+        document.getElementById('toggleCameraLabel').textContent = 'Start Live Camera';
+      }
+
+      function applyVideoFilterPreview() {
+        var video = document.getElementById('cameraVideo');
+        video.classList.remove('filter-pop', 'filter-high');
+        if (AppState.scanFilter === 'pop') video.classList.add('filter-pop');
+        if (AppState.scanFilter === 'high') video.classList.add('filter-high');
+      }
+
+      function captureFromLiveCamera() {
+        var video = document.getElementById('cameraVideo');
+        if (!AppState.cameraStream || !video.videoWidth) {
+          showToast('Camera is still warming up...', 'warn');
+          return;
+        }
+        var dataUrl = processImageToDataUrl(video, video.videoWidth, video.videoHeight, AppState.scanFilter);
+        var idx = AppState.draft.pages.length;
+        AppState.draft.pages.push({
+          id: generateId(),
+          type: getDefaultPageType(idx),
+          caption: '',
+          imageData: dataUrl
+        });
+        renderDraft();
+        showToast('Captured Page ' + (idx + 1) + '!', 'success');
+      }
+
+      function handlePhotoFiles(fileList) {
+        if (!fileList || fileList.length === 0) return;
+        var files = Array.prototype.slice.call(fileList);
+        showToast('Processing ' + files.length + ' photo(s)...');
+
+        var chain = Promise.resolve();
+        files.forEach(function (file) {
+          chain = chain.then(function () {
+            return new Promise(function (resolve) {
+              var reader = new FileReader();
+              reader.onload = function (ev) {
+                var img = new Image();
+                img.onload = function () {
+                  var dataUrl = processImageToDataUrl(img, img.width, img.height, AppState.scanFilter);
+                  var idx = AppState.draft.pages.length;
+                  AppState.draft.pages.push({
+                    id: generateId(),
+                    type: getDefaultPageType(idx),
+                    caption: '',
+                    imageData: dataUrl
+                  });
+                  resolve();
+                };
+                img.onerror = function () { resolve(); };
+                img.src = ev.target.result;
+              };
+              reader.onerror = function () { resolve(); };
+              reader.readAsDataURL(file);
+            });
+          });
+        });
+
+        chain.then(function () {
+          renderDraft();
+          showToast('Added ' + files.length + ' page(s) to journal!', 'success');
+        });
+      }
+
+      function renderDraft() {
+        updateNavBadges();
+        document.getElementById('draftTitleInput').value = AppState.draft.title || '';
+        document.getElementById('draftNotesInput').value = AppState.draft.notes || '';
+        document.getElementById('draftPageCountLabel').textContent = String(AppState.draft.pages.length);
+        document.getElementById('editingBadge').classList.toggle('hidden', !AppState.draft.editingGameId);
+
+        var listEl = document.getElementById('draftPagesList');
+        if (AppState.draft.pages.length === 0) {
+          listEl.innerHTML =
+            '<div style="text-align:center;padding:24px 12px;border:2px dashed var(--border);border-radius:14px;color:var(--ink-muted);font-size:13px;">' +
+              'No pages scanned yet. Snap a photo, upload pages, or add a quick Text Card!' +
+            '</div>';
+          return;
+        }
+
+        listEl.innerHTML = AppState.draft.pages.map(function (page, idx) {
+          return (
+            '<div class="draft-page-item" data-draft-idx="' + idx + '">' +
+              '<div class="draft-page-thumb">' +
+                '<img src="' + escHtml(page.imageData) + '" alt="Page ' + (idx + 1) + '" />' +
+              '</div>' +
+              '<div class="draft-page-fields">' +
+                '<div class="draft-page-top">' +
+                  '<div style="display:flex;align-items:center;gap:6px;">' +
+                    '<span class="pill ' + getPillClass(page.type) + '">#' + (idx + 1) + '</span>' +
+                    '<select class="select" data-draft-type="' + idx + '" style="min-height:32px;padding:4px 8px;font-size:12px;width:auto;">' +
+                      '<option value="secret"' + (page.type === 'secret' ? ' selected' : '') + '>Secret Word</option>' +
+                      '<option value="sketch"' + (page.type === 'sketch' ? ' selected' : '') + '>Sketch</option>' +
+                      '<option value="guess"' + (page.type === 'guess' ? ' selected' : '') + '>Guess</option>' +
+                    '</select>' +
+                  '</div>' +
+                  '<div class="draft-page-controls">' +
+                    '<button type="button" class="btn btn-sm btn-soft" data-draft-action="rotate" data-idx="' + idx + '" title="Rotate 90°">↻</button>' +
+                    '<button type="button" class="btn btn-sm btn-soft" data-draft-action="up" data-idx="' + idx + '" title="Move Up"' + (idx === 0 ? ' disabled' : '') + '>↑</button>' +
+                    '<button type="button" class="btn btn-sm btn-soft" data-draft-action="down" data-idx="' + idx + '" title="Move Down"' + (idx === AppState.draft.pages.length - 1 ? ' disabled' : '') + '>↓</button>' +
+                    '<button type="button" class="btn btn-sm btn-danger-soft" data-draft-action="remove" data-idx="' + idx + '" title="Delete Page">✕</button>' +
+                  '</div>' +
+                '</div>' +
+                '<input type="text" class="input" data-draft-caption="' + idx + '" value="' + escHtml(page.caption || '') + '" placeholder="Add caption for ' + escHtml(getPageTypeName(page.type)) + '..." style="min-height:36px;padding:6px 10px;font-size:13px;" />' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+      }
+
+      function saveDraftAndReveal() {
+        if (AppState.draft.pages.length === 0) {
+          showToast('Add at least one page before saving!', 'warn');
+          return;
+        }
+
+        var pages = AppState.draft.pages.map(function (p) {
+          return { id: p.id, type: p.type, caption: (p.caption || '').trim(), imageData: p.imageData };
+        });
+
+        var title = (AppState.draft.title || '').trim();
+        if (!title) {
+          var firstCap = pages[0].caption || 'Start';
+          var lastCap = pages[pages.length - 1].caption || 'Finish';
+          title = pages.length > 1 ? (firstCap + ' → ' + lastCap) : firstCap;
+        }
+
+        var savedId;
+        if (AppState.draft.editingGameId) {
+          var existing = AppState.games.find(function (g) { return g.id === AppState.draft.editingGameId; });
+          if (existing) {
+            existing.title = title;
+            existing.notes = (AppState.draft.notes || '').trim();
+            existing.pages = pages;
+            savedId = existing.id;
+          }
+        }
+
+        if (!savedId) {
+          var newGame = {
+            id: generateId(),
+            title: title,
+            notes: (AppState.draft.notes || '').trim(),
+            createdAt: Date.now(),
+            derailmentPageId: null,
+            pages: pages
+          };
+          AppState.games.unshift(newGame);
+          savedId = newGame.id;
+        }
+
+        StorageEngine.saveGames(AppState.games);
+        // Reset draft
+        AppState.draft = { editingGameId: null, title: '', notes: '', pages: [] };
+        updateNavBadges();
+        showToast('Journal saved to Vault!', 'success');
+        openGameInReveal(savedId, 0);
+      }
+
+      function loadGameIntoDraft(game) {
+        AppState.draft = {
+          editingGameId: game.id,
+          title: game.title || '',
+          notes: game.notes || '',
+          pages: (game.pages || []).map(function (p) {
+            return { id: p.id, type: p.type, caption: p.caption || '', imageData: p.imageData };
+          })
+        };
+        switchTab('scan');
+        showToast('Loaded "' + game.title + '" into editor.');
+      }
+
+      // =======================================================================
+      // 9. REVEAL PRESENTATION MODES
+      // =======================================================================
+      function getActiveRevealGame() {
+        if (!AppState.games.length) return null;
+        var found = AppState.games.find(function (g) { return g.id === AppState.revealGameId; });
+        if (!found) {
+          found = AppState.games[0];
+          AppState.revealGameId = found.id;
+        }
+        return found;
+      }
+
+      function openGameInReveal(gameId, pageIdx) {
+        AppState.revealGameId = gameId;
+        AppState.flipIndex = typeof pageIdx === 'number' ? pageIdx : 0;
+        AppState.coverHidden = pageIdx > 0;
+        switchTab('reveal');
+      }
+
+      function renderReveal() {
+        var game = getActiveRevealGame();
+        var selectEl = document.getElementById('revealGameSelect');
+        var emptyEl = document.getElementById('revealEmptyState');
+
+        selectEl.innerHTML = AppState.games.map(function (g) {
+          return '<option value="' + escHtml(g.id) + '"' + (game && g.id === game.id ? ' selected' : '') + '>' +
+            escHtml(g.title || 'Untitled Journal') + ' (' + (g.pages ? g.pages.length : 0) + ' pages)' +
+          '</option>';
+        }).join('');
+
+        if (!game || !game.pages || game.pages.length === 0) {
+          emptyEl.classList.remove('hidden');
+          ['flip', 'compare', 'comic'].forEach(function (m) {
+            document.getElementById('revealMode-' + m).classList.add('hidden');
+          });
+          return;
+        }
+
+        emptyEl.classList.add('hidden');
+        ['flip', 'compare', 'comic'].forEach(function (m) {
+          document.getElementById('revealMode-' + m).classList.toggle('hidden', m !== AppState.revealMode);
+          document.getElementById('modeBtn-' + m).classList.toggle('active', m === AppState.revealMode);
+        });
+
+        if (AppState.revealMode === 'flip') renderFlipMode(game);
+        if (AppState.revealMode === 'compare') renderCompareMode(game);
+        if (AppState.revealMode === 'comic') renderComicMode(game);
+      }
+
+      function renderFlipMode(game) {
+        var pages = game.pages;
+        if (AppState.flipIndex < 0) AppState.flipIndex = 0;
+        if (AppState.flipIndex >= pages.length) AppState.flipIndex = pages.length - 1;
+
+        var page = pages[AppState.flipIndex];
+        var pill = document.getElementById('flipPagePill');
+        pill.textContent = getPageLabel(AppState.flipIndex, page.type);
+        pill.className = 'pill ' + getPillClass(page.type);
+
+        document.getElementById('flipPageCounter').textContent = (AppState.flipIndex + 1) + ' / ' + pages.length;
+        document.getElementById('flipPageImg').src = page.imageData;
+
+        var showCover = AppState.autoCover && !AppState.coverHidden;
+        var coverEl = document.getElementById('suspenseCover');
+        document.getElementById('suspenseBadge').textContent = getPageLabel(AppState.flipIndex, page.type);
+        coverEl.classList.toggle('hidden', !showCover);
+
+        document.getElementById('flipPageCaption').textContent = showCover
+          ? '• • •'
+          : (page.caption || getPageTypeName(page.type));
+
+        var isDerail = page.id === game.derailmentPageId;
+        var crownBtn = document.getElementById('flipCrownBtn');
+        crownBtn.className = 'btn btn-sm ' + (isDerail ? 'btn-mustard' : 'btn-soft');
+        crownBtn.textContent = isDerail ? '👑 Crowned as Derailment Moment!' : '👑 Crown Derailment Moment';
+
+        document.getElementById('flipPrevBtn').disabled = AppState.flipIndex === 0;
+        document.getElementById('flipNextBtn').disabled = AppState.flipIndex === pages.length - 1;
+
+        var dotsEl = document.getElementById('flipDots');
+        dotsEl.innerHTML = pages.map(function (p, i) {
+          return '<button type="button" class="flip-dot' + (i === AppState.flipIndex ? ' active' : '') + '" data-flip-dot="' + i + '" aria-label="Go to page ' + (i + 1) + '"></button>';
+        }).join('');
+      }
+
+      function stepFlip(delta) {
+        var game = getActiveRevealGame();
+        if (!game) return;
+        var next = AppState.flipIndex + delta;
+        if (next < 0 || next >= game.pages.length) return;
+        AppState.flipIndex = next;
+        AppState.coverHidden = false;
+        renderFlipMode(game);
+      }
+
+      function renderCompareMode(game) {
+        var pages = game.pages;
+        var first = pages[0];
+        var last = pages[pages.length - 1];
+
+        document.getElementById('compareStartImg').src = first.imageData;
+        document.getElementById('compareStartCaption').textContent = first.caption || 'Page 1';
+        document.getElementById('compareEndImg').src = last.imageData;
+        document.getElementById('compareEndCaption').textContent = last.caption || ('Page ' + pages.length);
+
+        var chainEl = document.getElementById('compareChainList');
+        chainEl.innerHTML = pages.map(function (p, idx) {
+          var isDerail = p.id === game.derailmentPageId;
+          var arrow = idx < pages.length - 1 ? '<div style="font-size:16px;color:var(--ink-light);font-weight:900;">↓</div>' : '';
+          return (
+            '<div class="chain-item' + (isDerail ? ' is-derail' : '') + '">' +
+              '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+                '<span class="pill ' + getPillClass(p.type) + '">' + escHtml(getPageTypeName(p.type)) + '</span>' +
+                '<span style="font-family:var(--font-hand);font-size:18px;font-weight:700;overflow:hidden;text-overflow:ellipsis;">' +
+                  escHtml(p.caption || 'Page ' + (idx + 1)) +
+                '</span>' +
+              '</div>' +
+              (isDerail ? '<span class="pill pill-crown">👑 Derailment</span>' : '<span style="font-size:11px;color:var(--ink-light);font-weight:800;">#' + (idx + 1) + '</span>') +
+            '</div>' +
+            arrow
+          );
+        }).join('');
+      }
+
+      function renderComicMode(game) {
+        document.getElementById('comicTitle').textContent = game.title || 'Telestrations Journal';
+        document.getElementById('comicNotes').textContent = game.notes || formatDate(game.createdAt);
+
+        var gridEl = document.getElementById('comicStripGrid');
+        gridEl.innerHTML = game.pages.map(function (p, idx) {
+          var isDerail = p.id === game.derailmentPageId;
+          return (
+            '<div class="comic-panel' + (isDerail ? ' is-derail' : '') + '" data-crown-page="' + escHtml(p.id) + '" role="button" tabindex="0">' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+                '<span class="pill ' + getPillClass(p.type) + '">' + escHtml(getPageLabel(idx, p.type)) + '</span>' +
+                '<span class="pill ' + (isDerail ? 'pill-crown' : '') + '" style="' + (isDerail ? '' : 'background:#FFFFFF;border:1px solid var(--border);color:var(--ink-muted);') + '">' +
+                  (isDerail ? '👑 Derailment!' : '👑 Crown') +
+                '</span>' +
+              '</div>' +
+              '<div class="comic-panel-img">' +
+                '<img src="' + escHtml(p.imageData) + '" alt="' + escHtml(p.caption || 'Page') + '" />' +
+              '</div>' +
+              '<div class="comic-panel-caption">' + escHtml(p.caption || getPageTypeName(p.type)) + '</div>' +
+            '</div>'
+          );
+        }).join('');
+      }
+
+      function toggleDerailmentMoment(gameId, pageId) {
+        var game = AppState.games.find(function (g) { return g.id === gameId; });
+        if (!game) return;
+        game.derailmentPageId = (game.derailmentPageId === pageId) ? null : pageId;
+        StorageEngine.saveGames(AppState.games);
+        if (AppState.activeTab === 'reveal') renderReveal();
+        if (AppState.activeTab === 'history') renderHistory();
+        showToast(game.derailmentPageId ? '👑 Crowned Derailment Moment!' : 'Derailment crown removed.', 'success');
+      }
+
+      // =======================================================================
+      // 10. SHAREABLE COMIC STRIP PNG GENERATOR & WEB SHARE API
+      // =======================================================================
+      function buildComicStripCanvas(game) {
+        var pages = game.pages || [];
+        var cols = pages.length >= 4 ? 2 : 1;
+        var rows = Math.ceil(pages.length / cols);
+
+        var pad = 40;
+        var gap = 26;
+        var panelW = 520;
+        var imgH = 380;
+        var panelH = imgH + 96;
+        var headerH = 132;
+        var footerH = 52;
+
+        var canvasW = pad * 2 + cols * panelW + (cols - 1) * gap;
+        var canvasH = headerH + rows * panelH + (rows - 1) * gap + footerH;
+
+        var canvas = document.createElement('canvas');
+        canvas.width = canvasW;
+        canvas.height = canvasH;
+        var ctx = canvas.getContext('2d');
+
+        // Background paper
+        ctx.fillStyle = '#FAF6EE';
+        ctx.fillRect(0, 0, canvasW, canvasH);
+        ctx.fillStyle = 'rgba(30,41,59,0.06)';
+        for (var dx = 22; dx < canvasW; dx += 28) {
+          for (var dy = 22; dy < canvasH; dy += 28) {
+            ctx.fillRect(dx, dy, 2, 2);
+          }
+        }
+
+        // Header
+        ctx.fillStyle = '#1E293B';
+        ctx.font = '900 36px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(game.title || 'Telestrations Journal', canvasW / 2, 54, canvasW - 72);
+
+        ctx.fillStyle = '#64748B';
+        ctx.font = '600 19px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.fillText(formatDate(game.createdAt) + '  ·  ' + pages.length + ' Pages', canvasW / 2, 94, canvasW - 72);
+
+        var loadPromises = pages.map(function (p) {
+          return new Promise(function (resolve) {
+            var im = new Image();
+            im.onload = function () { resolve(im); };
+            im.onerror = function () { resolve(null); };
+            im.src = p.imageData;
+          });
+        });
+
+        return Promise.all(loadPromises).then(function (imgs) {
+          pages.forEach(function (page, idx) {
+            var col = idx % cols;
+            var row = Math.floor(idx / cols);
+            var x = pad + col * (panelW + gap);
+            var y = headerH + row * (panelH + gap);
+            var isDerail = page.id === game.derailmentPageId;
+
+            // Panel card
+            ctx.fillStyle = isDerail ? '#FFFBEB' : '#FFFFFF';
+            ctx.strokeStyle = isDerail ? '#F59E0B' : '#CBD5E1';
+            ctx.lineWidth = isDerail ? 6 : 3;
+            drawRoundedRect(ctx, x, y, panelW, panelH, 20);
+            ctx.fill();
+            ctx.stroke();
+
+            // Page image
+            var im = imgs[idx];
+            if (im) {
+              ctx.save();
+              drawRoundedRect(ctx, x + 14, y + 14, panelW - 28, imgH - 14, 12);
+              ctx.clip();
+              ctx.fillStyle = '#FFFFFF';
+              ctx.fillRect(x + 14, y + 14, panelW - 28, imgH - 14);
+              var bw = panelW - 28;
+              var bh = imgH - 14;
+              var ratio = Math.min(bw / im.width, bh / im.height);
+              var dw = im.width * ratio;
+              var dh = im.height * ratio;
+              ctx.drawImage(im, x + 14 + (bw - dw) / 2, y + 14 + (bh - dh) / 2, dw, dh);
+              ctx.restore();
+            }
+
+            // Type pill
+            var pillBg = page.type === 'sketch' ? '#EF4444' : (page.type === 'secret' ? '#2563EB' : '#0D9488');
+            ctx.fillStyle = pillBg;
+            drawRoundedRect(ctx, x + 22, y + 22, 168, 30, 15);
+            ctx.fill();
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = '800 14px -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(getPageLabel(idx, page.type).toUpperCase(), x + 106, y + 38);
+
+            // Derailment badge
+            if (isDerail) {
+              ctx.fillStyle = '#F59E0B';
+              drawRoundedRect(ctx, x + panelW - 178, y + 22, 156, 30, 15);
+              ctx.fill();
+              ctx.fillStyle = '#1E293B';
+              ctx.font = '800 13px -apple-system, BlinkMacSystemFont, sans-serif';
+              ctx.fillText('👑 DERAILMENT!', x + panelW - 100, y + 38);
+            }
+
+            // Caption
+            ctx.fillStyle = '#1E293B';
+            ctx.font = 'bold 28px "Marker Felt", "Comic Sans MS", cursive, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(page.caption || getPageTypeName(page.type), x + panelW / 2, y + imgH + 46, panelW - 36);
+          });
+
+          // Footer watermark
+          ctx.fillStyle = '#94A3B8';
+          ctx.font = '700 15px -apple-system, BlinkMacSystemFont, sans-serif';
           ctx.textAlign = 'center';
-          ctx.fillText(page.caption || getShortPageType(idx, page.type), x + panelW / 2, y + imgH + 46, panelW - 40);
+          ctx.fillText('Telestrations Vault', canvasW / 2, canvasH - 22);
 
-          if (page.author) {
-            ctx.fillStyle = '#94A3B8';
-            ctx.font = '700 15px Inter, sans-serif';
-            ctx.fillText(`— ${page.author}`, x + panelW / 2, y + imgH + 80, panelW - 40);
+          var slug = (game.title || 'journal').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 36);
+          return { canvas: canvas, filename: 'telestrations-' + (slug || 'strip') + '.png' };
+        });
+      }
+
+      function canvasToPngBlob(canvas) {
+        return new Promise(function (resolve, reject) {
+          if (canvas.toBlob) {
+            canvas.toBlob(function (blob) {
+              if (blob) resolve(blob);
+              else reject(new Error('PNG blob creation failed'));
+            }, 'image/png');
+          } else {
+            try {
+              var dataUrl = canvas.toDataURL('image/png');
+              var bin = atob(dataUrl.split(',')[1]);
+              var arr = new Uint8Array(bin.length);
+              for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+              resolve(new Blob([arr], { type: 'image/png' }));
+            } catch (err) {
+              reject(err);
+            }
+          }
+        });
+      }
+
+      function triggerPngDownload(canvas, filename) {
+        var link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      function downloadGamePng(game) {
+        if (!game || !game.pages || !game.pages.length) return;
+        showToast('Generating comic strip PNG...');
+        buildComicStripCanvas(game).then(function (res) {
+          triggerPngDownload(res.canvas, res.filename);
+          showToast('Comic strip PNG downloaded!', 'success');
+        }).catch(function (err) {
+          logWarn('PNG download failed: ' + err.message, 'ExportPNG');
+          showToast('Could not generate PNG.', 'error');
+        });
+      }
+
+      function shareGameStrip(game) {
+        if (!game || !game.pages || !game.pages.length) return;
+        showToast('Preparing strip to share...');
+        buildComicStripCanvas(game).then(function (res) {
+          return canvasToPngBlob(res.canvas).then(function (blob) {
+            var file = null;
+            try {
+              file = new File([blob], res.filename, { type: 'image/png' });
+            } catch (e) {
+              file = null;
+            }
+
+            if (file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+              return navigator.share({
+                files: [file],
+                title: game.title || 'Telestrations Strip',
+                text: game.notes ? (game.title + ' — ' + game.notes) : ('Telestrations round: ' + game.title)
+              }).then(function () {
+                showToast('Comic strip shared!', 'success');
+              }).catch(function (shareErr) {
+                if (shareErr && shareErr.name === 'AbortError') return;
+                triggerPngDownload(res.canvas, res.filename);
+                showToast('Share cancelled/unavailable — downloaded PNG instead.', 'warn');
+              });
+            }
+
+            // Fallback when file sharing isn't supported
+            triggerPngDownload(res.canvas, res.filename);
+            showToast('Native file sharing unsupported — downloaded PNG!', 'warn');
+          });
+        }).catch(function (err) {
+          logWarn('Share strip failed: ' + err.message, 'ShareStrip');
+          showToast('Could not share strip.', 'error');
+        });
+      }
+
+      // =======================================================================
+      // 11. JSON BACKUP EXPORT & IMPORT
+      // =======================================================================
+      function exportVaultJson() {
+        try {
+          var payload = JSON.stringify({
+            app: 'Telestrations Vault',
+            version: 2,
+            exportedAt: new Date().toISOString(),
+            games: AppState.games
+          }, null, 2);
+          var blob = new Blob([payload], { type: 'application/json' });
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = 'telestrations-vault-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+          showToast('Vault JSON backup downloaded!', 'success');
+        } catch (err) {
+          showToast('Backup export failed.', 'error');
+        }
+      }
+
+      function importVaultJson(file) {
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+          try {
+            var parsed = JSON.parse(ev.target.result);
+            var incoming = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.games) ? parsed.games : null);
+            if (!incoming) throw new Error('Invalid backup format');
+
+            var existingIds = {};
+            AppState.games.forEach(function (g) { existingIds[g.id] = true; });
+            var added = 0;
+            incoming.forEach(function (g) {
+              if (g && Array.isArray(g.pages) && g.pages.length > 0) {
+                if (!g.id || existingIds[g.id]) g.id = generateId();
+                AppState.games.unshift(g);
+                added++;
+              }
+            });
+
+            StorageEngine.saveGames(AppState.games);
+            renderHistory();
+            showToast('Imported ' + added + ' game(s) into your Vault!', 'success');
+          } catch (err) {
+            logWarn('JSON import error: ' + err.message, 'ImportJSON');
+            showToast('Invalid JSON backup file.', 'error');
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      // =======================================================================
+      // 12. DIAGNOSTICS MODAL
+      // =======================================================================
+      function openDiagnostics() {
+        var shareSupport = 'No';
+        if (navigator.share) {
+          shareSupport = navigator.canShare ? 'Yes (with File check)' : 'Yes (basic)';
+        }
+        var camSupport = (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ? 'Yes' : 'No';
+
+        document.getElementById('diagStorage').textContent = StorageEngine.backend;
+        document.getElementById('diagGamesCount').textContent = AppState.games.length + ' game(s)';
+        document.getElementById('diagOrigin').textContent = (window.location.protocol || '') + ' // Secure: ' + String(Boolean(window.isSecureContext));
+        document.getElementById('diagShare').textContent = shareSupport;
+        document.getElementById('diagCamera').textContent = camSupport;
+        document.getElementById('diagUA').textContent = navigator.userAgent || 'Unknown';
+
+        var logs = window.__TV_LOGS || [];
+        var box = document.getElementById('diagLogsBox');
+        if (logs.length === 0) {
+          box.textContent = 'No errors or warnings logged.';
+        } else {
+          box.textContent = logs.map(function (l) {
+            return '[' + l.time + '] ' + l.level + ' (' + (l.meta || '-') + '): ' + l.message + (l.stack ? '\n' + l.stack : '');
+          }).join('\n---\n');
+        }
+
+        document.getElementById('diagModal').classList.remove('hidden');
+      }
+
+      function closeDiagnostics() {
+        document.getElementById('diagModal').classList.add('hidden');
+      }
+
+      // =======================================================================
+      // 13. EVENT WIRING
+      // =======================================================================
+      function wireEvents() {
+        // Tab buttons
+        ['history', 'scan', 'reveal'].forEach(function (t) {
+          document.getElementById('tabBtn-' + t).addEventListener('click', function () {
+            switchTab(t);
+          });
+        });
+
+        // Diagnostics modal
+        document.getElementById('openDiagBtn').addEventListener('click', openDiagnostics);
+        document.getElementById('footerDiagBtn').addEventListener('click', openDiagnostics);
+        document.getElementById('closeDiagBtn').addEventListener('click', closeDiagnostics);
+        document.getElementById('closeDiagBtn2').addEventListener('click', closeDiagnostics);
+        document.getElementById('clearDiagLogsBtn').addEventListener('click', function () {
+          window.__TV_LOGS = [];
+          openDiagnostics();
+        });
+        document.getElementById('copyDiagBtn').addEventListener('click', function () {
+          var summary = [
+            'Telestrations Vault Diagnostics',
+            'Storage: ' + StorageEngine.backend,
+            'Games: ' + AppState.games.length,
+            'Origin: ' + window.location.protocol + ' (Secure: ' + Boolean(window.isSecureContext) + ')',
+            'Web Share: ' + document.getElementById('diagShare').textContent,
+            'Camera API: ' + document.getElementById('diagCamera').textContent,
+            'UA: ' + navigator.userAgent,
+            'Logs:\n' + document.getElementById('diagLogsBox').textContent
+          ].join('\n');
+          if (window.__TV_COPY_TEXT) window.__TV_COPY_TEXT(summary);
+          showToast('Diagnostics copied to clipboard!', 'success');
+        });
+
+        // Confirm modal
+        document.getElementById('confirmCancelBtn').addEventListener('click', function () { closeConfirm(false); });
+        document.getElementById('confirmOkBtn').addEventListener('click', function () { closeConfirm(true); });
+
+        // History toolbar
+        document.getElementById('historySearchInput').addEventListener('input', function (e) {
+          AppState.searchQuery = e.target.value;
+          renderHistory();
+        });
+        document.getElementById('newScanShortcutBtn').addEventListener('click', function () {
+          switchTab('scan');
+        });
+        document.getElementById('exportJsonBtn').addEventListener('click', exportVaultJson);
+        document.getElementById('importJsonInput').addEventListener('change', function (e) {
+          if (e.target.files && e.target.files[0]) {
+            importVaultJson(e.target.files[0]);
+            e.target.value = '';
           }
         });
 
-        // Footer watermark
-        ctx.fillStyle = '#94A3B8';
-        ctx.font = '700 16px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('Created with Telestrations Vault', canvasW / 2, canvasH - 24);
-
-        const slug = (game.title || 'journal')
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/^-|-$/g, '')
-          .slice(0, 40);
-        const filename = `telestrations-${slug || 'strip'}.png`;
-
-        return { canvas, filename };
-      }
-
-      /**
-       * Trigger direct PNG file download from a canvas.
-       */
-      function downloadCanvasAsPng(canvas, filename) {
-        const link = document.createElement('a');
-        link.download = filename;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-      }
-
-      /**
-       * Download the generated comic strip PNG directly.
-       */
-      async function exportGameAsPngStrip(game) {
-        if (!game || !game.pages || game.pages.length === 0) return;
-        showToast('Generating PNG strip...', 'dark');
-        try {
-          const { canvas, filename } = await buildComicStripCanvas(game);
-          downloadCanvasAsPng(canvas, filename);
-          showToast('PNG strip downloaded!', 'success');
-        } catch (err) {
-          showToast('Could not export PNG strip.', 'error');
-        }
-      }
-
-      /**
-       * Share the generated comic strip PNG via the native Web Share API
-       * (Messages, AirDrop, Save Image on iOS/Android), with automatic download fallback.
-       */
-      async function shareGameAsPngStrip(game) {
-        if (!game || !game.pages || game.pages.length === 0) return;
-        showToast('Preparing comic strip to share...', 'dark');
-
-        try {
-          const { canvas, filename } = await buildComicStripCanvas(game);
-          const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
-          if (!blob) throw new Error('PNG encoding failed');
-
-          const file = new File([blob], filename, { type: 'image/png' });
-          const shareData = {
-            files: [file],
-            title: game.title || 'Telestrations Strip',
-            text: game.notes
-              ? `${game.title} — "${game.notes}"`
-              : `Check out our Telestrations round: ${game.title || 'Game Night'}!`,
-          };
-
-          if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
-            try {
-              await navigator.share(shareData);
-              showToast('Comic strip shared!', 'success');
-              return;
-            } catch (shareErr) {
-              // User dismissed the share sheet intentionally
-              if (shareErr && shareErr.name === 'AbortError') return;
-            }
+        // History list delegation
+        document.getElementById('gamesList').addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-action]');
+          if (!btn) return;
+          var action = btn.dataset.action;
+          if (action === 'go-scan') {
+            switchTab('scan');
+            return;
           }
+          var gameId = btn.dataset.gameId;
+          var game = AppState.games.find(function (g) { return g.id === gameId; });
+          if (!game) return;
 
-          // Graceful fallback when native file sharing is unsupported
-          downloadCanvasAsPng(canvas, filename);
-          showToast('Native share unavailable — downloaded PNG instead!', 'warn');
-        } catch (err) {
-          showToast('Could not prepare comic strip.', 'error');
-        }
-      }
-<!-- ... existing code ... -->
           if (action === 'reveal') {
             openGameInReveal(gameId, 0);
           } else if (action === 'open-page') {
             openGameInReveal(gameId, parseInt(btn.dataset.pageIdx || '0', 10));
           } else if (action === 'share-strip') {
-            shareGameAsPngStrip(game);
+            shareGameStrip(game);
+          } else if (action === 'download-png') {
+            downloadGamePng(game);
           } else if (action === 'edit') {
             loadGameIntoDraft(game);
-          } else if (action === 'export-png') {
-            exportGameAsPngStrip(game);
-<!-- ... existing code ... -->
-        document.getElementById('revealEditGameBtn').addEventListener('click', () => {
-          const game = getActiveRevealGame();
-          if (game) loadGameIntoDraft(game);
+          } else if (action === 'delete') {
+            askConfirm('Delete Journal?', 'Remove "' + (game.title || 'Untitled') + '" from your archive? This cannot be undone.', 'Delete').then(function (ok) {
+              if (!ok) return;
+              AppState.games = AppState.games.filter(function (g) { return g.id !== gameId; });
+              if (AppState.revealGameId === gameId) AppState.revealGameId = null;
+              StorageEngine.saveGames(AppState.games);
+              renderHistory();
+              showToast('Journal deleted.');
+            });
+          }
         });
-        document.getElementById('shareStripBtn').addEventListener('click', () => {
-          const game = getActiveRevealGame();
-          if (game) shareGameAsPngStrip(game);
+
+        // Inline notes editing in History
+        document.getElementById('gamesList').addEventListener('change', function (e) {
+          var input = e.target.closest('[data-notes-game-id]');
+          if (!input) return;
+          var game = AppState.games.find(function (g) { return g.id === input.dataset.notesGameId; });
+          if (game) {
+            game.notes = input.value.trim();
+            StorageEngine.saveGames(AppState.games);
+            showToast('Note saved!', 'success');
+          }
         });
-        document.getElementById('exportPngStripBtn').addEventListener('click', () => {
-          const game = getActiveRevealGame();
-          if (game) exportGameAsPngStrip(game);
+
+        // Scan Journal controls
+        document.getElementById('toggleCameraBtn').addEventListener('click', function () {
+          if (AppState.cameraStream) stopCamera();
+          else startCamera();
         });
-<!-- ... existing code ... -->
-        // Comic Strip Crown delegation (tapping anywhere on a panel crowns/toggles it)
-        document.getElementById('comicStripGrid').addEventListener('click', (e) => {
-          const panel = e.target.closest('[data-crown-page]');
+        document.getElementById('shutterBtn').addEventListener('click', captureFromLiveCamera);
+        document.getElementById('multiPhotoInput').addEventListener('change', function (e) {
+          handlePhotoFiles(e.target.files);
+          e.target.value = '';
+        });
+
+        // Filter pills
+        document.querySelectorAll('.filter-pill').forEach(function (pill) {
+          pill.addEventListener('click', function () {
+            AppState.scanFilter = pill.dataset.filter;
+            document.querySelectorAll('.filter-pill').forEach(function (p) {
+              p.classList.toggle('active', p === pill);
+            });
+            applyVideoFilterPreview();
+          });
+        });
+
+        // Text-only card composer
+        document.getElementById('toggleTextCardBtn').addEventListener('click', function () {
+          var box = document.getElementById('textCardComposer');
+          box.classList.toggle('hidden');
+          if (!box.classList.contains('hidden')) {
+            var nextType = getDefaultPageType(AppState.draft.pages.length);
+            document.getElementById('textCardType').value = nextType === 'secret' ? 'secret' : 'guess';
+            document.getElementById('textCardInput').focus();
+          }
+        });
+        document.getElementById('cancelTextCardBtn').addEventListener('click', function () {
+          document.getElementById('textCardComposer').classList.add('hidden');
+        });
+        document.getElementById('addTextCardBtn').addEventListener('click', function () {
+          var text = document.getElementById('textCardInput').value.trim();
+          var type = document.getElementById('textCardType').value;
+          if (!text) {
+            showToast('Type a word or phrase first!', 'warn');
+            return;
+          }
+          AppState.draft.pages.push({
+            id: generateId(),
+            type: type,
+            caption: text,
+            imageData: renderTextCardImage(text, type)
+          });
+          document.getElementById('textCardInput').value = '';
+          document.getElementById('textCardComposer').classList.add('hidden');
+          renderDraft();
+          showToast('Text card added!', 'success');
+        });
+
+        // Draft metadata inputs
+        document.getElementById('draftTitleInput').addEventListener('input', function (e) {
+          AppState.draft.title = e.target.value;
+        });
+        document.getElementById('draftNotesInput').addEventListener('input', function (e) {
+          AppState.draft.notes = e.target.value;
+        });
+
+        // Draft pages list delegation
+        document.getElementById('draftPagesList').addEventListener('input', function (e) {
+          var capInput = e.target.closest('[data-draft-caption]');
+          if (capInput) {
+            var idx = parseInt(capInput.dataset.draftCaption, 10);
+            if (AppState.draft.pages[idx]) AppState.draft.pages[idx].caption = capInput.value;
+          }
+        });
+
+        document.getElementById('draftPagesList').addEventListener('change', function (e) {
+          var typeSel = e.target.closest('[data-draft-type]');
+          if (typeSel) {
+            var idx = parseInt(typeSel.dataset.draftType, 10);
+            if (AppState.draft.pages[idx]) {
+              AppState.draft.pages[idx].type = typeSel.value;
+              renderDraft();
+            }
+          }
+        });
+
+        document.getElementById('draftPagesList').addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-draft-action]');
+          if (!btn) return;
+          var action = btn.dataset.draftAction;
+          var idx = parseInt(btn.dataset.idx, 10);
+          var pages = AppState.draft.pages;
+          if (!pages[idx]) return;
+
+          if (action === 'remove') {
+            pages.splice(idx, 1);
+            renderDraft();
+          } else if (action === 'up' && idx > 0) {
+            var tmpUp = pages[idx - 1];
+            pages[idx - 1] = pages[idx];
+            pages[idx] = tmpUp;
+            renderDraft();
+          } else if (action === 'down' && idx < pages.length - 1) {
+            var tmpDn = pages[idx + 1];
+            pages[idx + 1] = pages[idx];
+            pages[idx] = tmpDn;
+            renderDraft();
+          } else if (action === 'rotate') {
+            rotateImageDataUrl(pages[idx].imageData).then(function (rotated) {
+              pages[idx].imageData = rotated;
+              renderDraft();
+            }).catch(function () {
+              showToast('Could not rotate page.', 'error');
+            });
+          }
+        });
+
+        document.getElementById('clearDraftBtn').addEventListener('click', function () {
+          if (AppState.draft.pages.length === 0 && !AppState.draft.title) return;
+          askConfirm('Clear Draft?', 'Discard all currently scanned pages in this draft?', 'Clear').then(function (ok) {
+            if (!ok) return;
+            AppState.draft = { editingGameId: null, title: '', notes: '', pages: [] };
+            renderDraft();
+            showToast('Draft cleared.');
+          });
+        });
+
+        document.getElementById('saveAndRevealBtn').addEventListener('click', saveDraftAndReveal);
+
+        // Reveal controls
+        document.getElementById('revealGameSelect').addEventListener('change', function (e) {
+          AppState.revealGameId = e.target.value;
+          AppState.flipIndex = 0;
+          AppState.coverHidden = false;
+          renderReveal();
+        });
+        document.getElementById('revealGoScanBtn').addEventListener('click', function () { switchTab('scan'); });
+        document.getElementById('revealEditBtn').addEventListener('click', function () {
+          var g = getActiveRevealGame();
+          if (g) loadGameIntoDraft(g);
+        });
+        document.getElementById('revealShareBtn').addEventListener('click', function () {
+          var g = getActiveRevealGame();
+          if (g) shareGameStrip(g);
+        });
+        document.getElementById('revealDownloadBtn').addEventListener('click', function () {
+          var g = getActiveRevealGame();
+          if (g) downloadGamePng(g);
+        });
+
+        // Reveal mode buttons
+        ['flip', 'compare', 'comic'].forEach(function (mode) {
+          document.getElementById('modeBtn-' + mode).addEventListener('click', function () {
+            AppState.revealMode = mode;
+            renderReveal();
+          });
+        });
+
+        // Flip mode interactions
+        document.getElementById('autoCoverCheckbox').addEventListener('change', function (e) {
+          AppState.autoCover = e.target.checked;
+          if (!AppState.autoCover) AppState.coverHidden = true;
+          var g = getActiveRevealGame();
+          if (g) renderFlipMode(g);
+        });
+        document.getElementById('suspenseCover').addEventListener('click', function () {
+          AppState.coverHidden = true;
+          var g = getActiveRevealGame();
+          if (g) renderFlipMode(g);
+        });
+        document.getElementById('flipPrevBtn').addEventListener('click', function () { stepFlip(-1); });
+        document.getElementById('flipNextBtn').addEventListener('click', function () { stepFlip(1); });
+        document.getElementById('flipDots').addEventListener('click', function (e) {
+          var dot = e.target.closest('[data-flip-dot]');
+          if (!dot) return;
+          AppState.flipIndex = parseInt(dot.dataset.flipDot, 10);
+          AppState.coverHidden = false;
+          var g = getActiveRevealGame();
+          if (g) renderFlipMode(g);
+        });
+        document.getElementById('flipCrownBtn').addEventListener('click', function () {
+          var g = getActiveRevealGame();
+          if (g && g.pages[AppState.flipIndex]) {
+            toggleDerailmentMoment(g.id, g.pages[AppState.flipIndex].id);
+          }
+        });
+
+        // Touch swipe support for Dramatic Flip
+        var touchStartX = 0;
+        var swipeArea = document.getElementById('flipSwipeArea');
+        swipeArea.addEventListener('touchstart', function (e) {
+          if (e.changedTouches && e.changedTouches[0]) {
+            touchStartX = e.changedTouches[0].screenX;
+          }
+        }, { passive: true });
+        swipeArea.addEventListener('touchend', function (e) {
+          if (!e.changedTouches || !e.changedTouches[0]) return;
+          var dx = e.changedTouches[0].screenX - touchStartX;
+          if (Math.abs(dx) > 45) {
+            if (dx < 0) stepFlip(1);
+            else stepFlip(-1);
+          }
+        }, { passive: true });
+
+        // Keyboard arrow navigation for Dramatic Flip
+        document.addEventListener('keydown', function (e) {
+          if (AppState.activeTab !== 'reveal' || AppState.revealMode !== 'flip') return;
+          var tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+          if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+          if (e.key === 'ArrowRight') {
+            stepFlip(1);
+          } else if (e.key === 'ArrowLeft') {
+            stepFlip(-1);
+          } else if (e.key === ' ' || e.key === 'Enter') {
+            if (AppState.autoCover && !AppState.coverHidden) {
+              e.preventDefault();
+              AppState.coverHidden = true;
+              var g = getActiveRevealGame();
+              if (g) renderFlipMode(g);
+            }
+          }
+        });
+
+        // Comic Strip tap-to-crown delegation
+        document.getElementById('comicStripGrid').addEventListener('click', function (e) {
+          var panel = e.target.closest('[data-crown-page]');
           if (!panel) return;
-          const game = getActiveRevealGame();
-          if (game) toggleDerailmentMoment(game.id, panel.dataset.crownPage);
+          var g = getActiveRevealGame();
+          if (g) toggleDerailmentMoment(g.id, panel.dataset.crownPage);
         });
-<!-- ... existing code ... -->
+      }
+
+      // =======================================================================
+      // 14. INITIALIZATION
+      // =======================================================================
+      function initApp() {
+        try {
+          wireEvents();
+
+          StorageEngine.init().then(function () {
+            return StorageEngine.loadGames();
+          }).then(function (loaded) {
+            if (Array.isArray(loaded) && loaded.length > 0) {
+              AppState.games = loaded;
+            } else {
+              AppState.games = createSampleGames();
+              StorageEngine.saveGames(AppState.games);
+            }
+
+            renderHistory();
+            renderDraft();
+
+            // Mark boot complete & hide static fallback screen
+            window.__TV_BOOTED = true;
+            var fallback = document.getElementById('boot-fallback');
+            if (fallback) fallback.classList.add('hidden');
+            logInfo('Telestrations Vault booted cleanly', 'initApp');
+          }).catch(function (err) {
+            if (window.__TV_SHOW_ERROR) {
+              window.__TV_SHOW_ERROR('Startup Error', err.message || String(err), 'initApp', err.stack || '');
+            }
+          });
+        } catch (err) {
+          if (window.__TV_SHOW_ERROR) {
+            window.__TV_SHOW_ERROR('Initialization Error', err.message || String(err), 'initApp', err.stack || '');
+          }
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+      } else {
+        initApp();
+      }
+    })();
+  </script>
+</body>
+</html>
