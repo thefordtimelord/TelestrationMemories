@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Telestrations" />
+  <meta name="theme-color" content="#FAF6EE" />
+  <title>Telestrations Vault — Tabletop Journal Scanner &amp; Archive</title>
+<!-- ... existing code ... -->
+  <style>
+    /* Base warm tabletop sketchbook styling with iOS standalone safe-area support */
+    body {
+      background-color: #FAF6EE;
+      color: #1E293B;
+      font-family: 'Inter', system-ui, sans-serif;
+      background-image: radial-gradient(rgba(30, 41, 59, 0.055) 1px, transparent 1px);
+      background-size: 22px 22px;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    header.sticky {
+      padding-top: env(safe-area-inset-top);
+    }
+
+    /* Notebook spiral binding strip along top of cards */
+<!-- ... existing code ... -->
+            <div class="flex flex-wrap items-center gap-2 shrink-0">
+              <button id="revealEditGameBtn" class="btn-tactile min-h-[40px] px-3 py-2 rounded-xl bg-paper hover:bg-paperDark text-ink font-bold text-xs sm:text-sm border-2 border-ink/15 flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Edit
+              </button>
+              <button id="shareStripBtn" class="btn-tactile min-h-[40px] px-3.5 py-2 rounded-xl bg-markerBlue hover:bg-blue-700 text-white font-bold text-xs sm:text-sm border-2 border-ink/90 shadow-tactileSm flex items-center gap-1.5">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                Share Strip
+              </button>
+              <button id="exportPngStripBtn" class="btn-tactile min-h-[40px] px-3.5 py-2 rounded-xl bg-markerTeal hover:bg-teal-700 text-white font-bold text-xs sm:text-sm border-2 border-ink/90 shadow-tactileSm flex items-center gap-1.5">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download PNG
+              </button>
+            </div>
+<!-- ... existing code ... -->
+                <div>
+                  <h2 id="comicTitle" class="text-xl sm:text-2xl font-extrabold text-ink"></h2>
+                  <p id="comicNotes" class="text-xs sm:text-sm text-slate-500 mt-0.5"></p>
+                </div>
+                <span class="text-xs font-semibold text-amber-800 bg-amber-100 border border-amber-300 px-3 py-1 rounded-full">
+                  👑 Tap any panel to crown the Derailment Moment
+                </span>
+              </div>
+<!-- ... existing code ... -->
+                    <!-- Card Action Buttons -->
+                    <div class="flex flex-wrap items-center gap-2 shrink-0">
+                      <button data-action="reveal" data-game-id="${esc(game.id)}" class="btn-tactile min-h-[40px] px-4 py-2 rounded-xl bg-markerBlue hover:bg-blue-700 text-white font-bold text-xs sm:text-sm border-2 border-ink/90 shadow-tactileSm flex items-center gap-1.5">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        Reveal
+                      </button>
+                      <button data-action="share-strip" data-game-id="${esc(game.id)}" title="Share comic strip via Messages, AirDrop, or Photos" class="btn-tactile min-h-[40px] px-3.5 py-2 rounded-xl bg-markerTeal hover:bg-teal-700 text-white font-bold text-xs sm:text-sm border-2 border-ink/90 shadow-tactileSm flex items-center gap-1.5">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                        Share Strip
+                      </button>
+                      <button data-action="export-png" data-game-id="${esc(game.id)}" title="Download PNG strip" class="btn-tactile min-h-[40px] px-3 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-markerTeal font-bold text-xs sm:text-sm border-2 border-teal-200 flex items-center gap-1">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                      </button>
+                      <button data-action="edit" data-game-id="${esc(game.id)}" class="btn-tactile min-h-[40px] px-3 py-2 rounded-xl bg-paper hover:bg-paperDark text-ink font-bold text-xs sm:text-sm border-2 border-ink/15 flex items-center gap-1">
+                        Edit
+                      </button>
+                      <button data-action="delete" data-game-id="${esc(game.id)}" title="Delete game" class="btn-tactile min-h-[40px] px-2.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-markerCoral font-bold text-xs border-2 border-red-200">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      </button>
+                    </div>
+<!-- ... existing code ... -->
+        const grid = document.getElementById('comicStripGrid');
+        grid.innerHTML = game.pages
+          .map((page, idx) => {
+            const isDerail = page.id === game.derailmentPageId;
+            const tagColor = page.type === 'sketch' ? 'bg-markerCoral' : idx === 0 ? 'bg-markerBlue' : 'bg-markerTeal';
+            return `
+              <div
+                data-crown-page="${esc(page.id)}"
+                role="button"
+                tabindex="0"
+                title="Tap panel to toggle Derailment Moment"
+                class="relative flex flex-col bg-paper hover:bg-paperDark/60 rounded-2xl border-2 cursor-pointer transition-all ${
+                  isDerail ? 'border-markerAmber ring-4 ring-markerAmber/25' : 'border-ink/15 hover:border-markerAmber/60'
+                } p-3 shadow-sm"
+              >
+                <!-- Speech-bubble header tag -->
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold text-white ${tagColor}">
+                    ${esc(getPageLabel(idx, page.type))}
+                  </span>
+                  <span
+                    class="px-2 py-1 rounded-lg text-[11px] font-bold border transition-colors ${
+                      isDerail
+                        ? 'bg-markerAmber text-ink border-ink/70 shadow-tactileSm'
+                        : 'bg-white text-slate-500 border-ink/15'
+                    }"
+                  >
+                    👑 ${isDerail ? 'Derailment!' : 'Crown'}
+                  </span>
+                </div>
+<!-- ... existing code ... -->
+      // =========================================================================
+      // 10. NATIVE SHARE & EXPORT SHAREABLE PNG STRIP (HTML5 CANVAS)
+      // =========================================================================
+
+      /**
+       * Render a high-resolution shareable comic strip canvas for a game.
+       */
+      async function buildComicStripCanvas(game) {
+        const pages = game.pages;
+        const cols = pages.length >= 4 ? 2 : 1;
+        const rows = Math.ceil(pages.length / cols);
+
+        const pad = 44;
+        const gap = 30;
+        const panelW = 540;
+        const imgH = 405;
+        const panelH = imgH + 112;
+        const headerH = 140;
+        const footerH = 56;
+
+        const canvasW = pad * 2 + cols * panelW + (cols - 1) * gap;
+        const canvasH = headerH + rows * panelH + (rows - 1) * gap + footerH;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasW;
+        canvas.height = canvasH;
+        const ctx = canvas.getContext('2d');
+
+        // Cream sketchbook background
+        ctx.fillStyle = '#FAF6EE';
+        ctx.fillRect(0, 0, canvasW, canvasH);
+
+        // Subtle dotted paper texture
+        ctx.fillStyle = 'rgba(30,41,59,0.06)';
+        for (let x = 20; x < canvasW; x += 28) {
+          for (let y = 20; y < canvasH; y += 28) {
+            ctx.fillRect(x, y, 2, 2);
+          }
+        }
+
+        // Title Header
+        ctx.fillStyle = '#1E293B';
+        ctx.font = '800 38px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(game.title || 'Telestrations Journal', canvasW / 2, 58, canvasW - 80);
+
+        ctx.fillStyle = '#64748B';
+        ctx.font = '600 20px Inter, sans-serif';
+        const subtitle = [game.owner, formatDate(game.createdAt), `${pages.length} Pages`].filter(Boolean).join('  ·  ');
+        ctx.fillText(subtitle, canvasW / 2, 102, canvasW - 80);
+
+        // Load all page images
+        const loadedImgs = await Promise.all(
+          pages.map(
+            (p) =>
+              new Promise((res) => {
+                const im = new Image();
+                im.onload = () => res(im);
+                im.onerror = () => res(null);
+                im.src = p.imageData;
+              })
+          )
+        );
+
+        // Draw each panel
+        pages.forEach((page, idx) => {
+          const col = idx % cols;
+          const row = Math.floor(idx / cols);
+          const x = pad + col * (panelW + gap);
+          const y = headerH + row * (panelH + gap);
+          const isDerail = page.id === game.derailmentPageId;
+
+          // Card container
+          ctx.fillStyle = '#FFFFFF';
+          ctx.strokeStyle = isDerail ? '#F59E0B' : '#CBD5E1';
+          ctx.lineWidth = isDerail ? 6 : 3;
+          ctx.beginPath();
+          ctx.roundRect(x, y, panelW, panelH, 22);
+          ctx.fill();
+          ctx.stroke();
+
+          // Page image fitted cleanly inside frame
+          const im = loadedImgs[idx];
+          if (im) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.roundRect(x + 14, y + 14, panelW - 28, imgH - 14, 14);
+            ctx.clip();
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(x + 14, y + 14, panelW - 28, imgH - 14);
+
+            const boxW = panelW - 28;
+            const boxH = imgH - 14;
+            const ratio = Math.min(boxW / im.width, boxH / im.height);
+            const dw = im.width * ratio;
+            const dh = im.height * ratio;
+            ctx.drawImage(im, x + 14 + (boxW - dw) / 2, y + 14 + (boxH - dh) / 2, dw, dh);
+            ctx.restore();
+          }
+
+          // Type Pill
+          const pillColor = page.type === 'sketch' ? '#EF4444' : idx === 0 ? '#2563EB' : '#0D9488';
+          ctx.fillStyle = pillColor;
+          ctx.beginPath();
+          ctx.roundRect(x + 22, y + 22, 170, 32, 16);
+          ctx.fill();
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = '800 15px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(getPageLabel(idx, page.type).toUpperCase(), x + 107, y + 39);
+
+          // Derailment Crown Badge
+          if (isDerail) {
+            ctx.fillStyle = '#F59E0B';
+            ctx.beginPath();
+            ctx.roundRect(x + panelW - 188, y + 22, 166, 32, 16);
+            ctx.fill();
+            ctx.fillStyle = '#1E293B';
+            ctx.font = '800 14px Inter, sans-serif';
+            ctx.fillText('👑 DERAILMENT!', x + panelW - 105, y + 39);
+          }
+
+          // Caption Text
+          ctx.fillStyle = '#1E293B';
+          ctx.font = 'bold 30px "Patrick Hand", cursive, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(page.caption || getShortPageType(idx, page.type), x + panelW / 2, y + imgH + 46, panelW - 40);
+
+          if (page.author) {
+            ctx.fillStyle = '#94A3B8';
+            ctx.font = '700 15px Inter, sans-serif';
+            ctx.fillText(`— ${page.author}`, x + panelW / 2, y + imgH + 80, panelW - 40);
+          }
+        });
+
+        // Footer watermark
+        ctx.fillStyle = '#94A3B8';
+        ctx.font = '700 16px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Created with Telestrations Vault', canvasW / 2, canvasH - 24);
+
+        const slug = (game.title || 'journal')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '')
+          .slice(0, 40);
+        const filename = `telestrations-${slug || 'strip'}.png`;
+
+        return { canvas, filename };
+      }
+
+      /**
+       * Trigger direct PNG file download from a canvas.
+       */
+      function downloadCanvasAsPng(canvas, filename) {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }
+
+      /**
+       * Download the generated comic strip PNG directly.
+       */
+      async function exportGameAsPngStrip(game) {
+        if (!game || !game.pages || game.pages.length === 0) return;
+        showToast('Generating PNG strip...', 'dark');
+        try {
+          const { canvas, filename } = await buildComicStripCanvas(game);
+          downloadCanvasAsPng(canvas, filename);
+          showToast('PNG strip downloaded!', 'success');
+        } catch (err) {
+          showToast('Could not export PNG strip.', 'error');
+        }
+      }
+
+      /**
+       * Share the generated comic strip PNG via the native Web Share API
+       * (Messages, AirDrop, Save Image on iOS/Android), with automatic download fallback.
+       */
+      async function shareGameAsPngStrip(game) {
+        if (!game || !game.pages || game.pages.length === 0) return;
+        showToast('Preparing comic strip to share...', 'dark');
+
+        try {
+          const { canvas, filename } = await buildComicStripCanvas(game);
+          const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+          if (!blob) throw new Error('PNG encoding failed');
+
+          const file = new File([blob], filename, { type: 'image/png' });
+          const shareData = {
+            files: [file],
+            title: game.title || 'Telestrations Strip',
+            text: game.notes
+              ? `${game.title} — "${game.notes}"`
+              : `Check out our Telestrations round: ${game.title || 'Game Night'}!`,
+          };
+
+          if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+            try {
+              await navigator.share(shareData);
+              showToast('Comic strip shared!', 'success');
+              return;
+            } catch (shareErr) {
+              // User dismissed the share sheet intentionally
+              if (shareErr && shareErr.name === 'AbortError') return;
+            }
+          }
+
+          // Graceful fallback when native file sharing is unsupported
+          downloadCanvasAsPng(canvas, filename);
+          showToast('Native share unavailable — downloaded PNG instead!', 'warn');
+        } catch (err) {
+          showToast('Could not prepare comic strip.', 'error');
+        }
+      }
+<!-- ... existing code ... -->
+          if (action === 'reveal') {
+            openGameInReveal(gameId, 0);
+          } else if (action === 'open-page') {
+            openGameInReveal(gameId, parseInt(btn.dataset.pageIdx || '0', 10));
+          } else if (action === 'share-strip') {
+            shareGameAsPngStrip(game);
+          } else if (action === 'edit') {
+            loadGameIntoDraft(game);
+          } else if (action === 'export-png') {
+            exportGameAsPngStrip(game);
+<!-- ... existing code ... -->
+        document.getElementById('revealEditGameBtn').addEventListener('click', () => {
+          const game = getActiveRevealGame();
+          if (game) loadGameIntoDraft(game);
+        });
+        document.getElementById('shareStripBtn').addEventListener('click', () => {
+          const game = getActiveRevealGame();
+          if (game) shareGameAsPngStrip(game);
+        });
+        document.getElementById('exportPngStripBtn').addEventListener('click', () => {
+          const game = getActiveRevealGame();
+          if (game) exportGameAsPngStrip(game);
+        });
+<!-- ... existing code ... -->
+        // Comic Strip Crown delegation (tapping anywhere on a panel crowns/toggles it)
+        document.getElementById('comicStripGrid').addEventListener('click', (e) => {
+          const panel = e.target.closest('[data-crown-page]');
+          if (!panel) return;
+          const game = getActiveRevealGame();
+          if (game) toggleDerailmentMoment(game.id, panel.dataset.crownPage);
+        });
+<!-- ... existing code ... -->
